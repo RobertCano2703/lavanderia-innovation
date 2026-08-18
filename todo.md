@@ -196,3 +196,12 @@
 ### Verificaciones pendientes de la vista previa
 - [x] Verificar la vista previa interna del recibo en viewport móvil y confirmar que conserva scroll y botones accesibles
 - [x] Probar el botón Imprimir y cancelar el diálogo del navegador, confirmando que permanece en Domicilios/Tickets
+
+## Mejoras solicitadas en Domicilios/Tickets
+- [x] Mostrar el catálogo de servicios en el formulario Nuevo domicilio y autocompletar su precio
+- [x] Mostrar clientes existentes y añadir Crear cliente con el mismo formulario del módulo Clientes
+- [x] Guardar el domicilio usando el cliente y servicio seleccionados
+- [x] Hacer funcional Buscar ticket con filtrado por número, cliente y servicio
+- [x] Hacer funcional Estado con filtrado por estado del ticket
+- [x] Añadir pruebas de selección, alta rápida y filtros
+- [x] Verificar el flujo completo en escritorio y móvil
