@@ -19,9 +19,17 @@
 
 ## Pendientes detectados en verificación
 
-- [ ] Implementar CRUD real de clientes con formularios, detalle, edición y eliminación persistidos en base de datos
-- [ ] Implementar autenticación local completa con backend, hash de contraseña, sesiones y uso real de local_users
-- [ ] Crear formulario público de solicitud con enlace wa.me funcional
-- [ ] Agregar claves foráneas y relaciones reales al esquema de tickets
-- [ ] Implementar seed de base de datos para administrador, servicios y repartidores
-- [ ] Añadir pruebas Vitest de módulos principales y validar responsive/flujo en escritorio y móvil
+- [x] Implementar CRUD real de clientes con formularios, detalle, edición y eliminación persistidos en base de datos
+- [x] Implementar autenticación local completa con backend, hash de contraseña, sesiones y uso real de local_users
+- [x] Crear formulario público de solicitud con enlace wa.me funcional
+- [x] Agregar claves foráneas y relaciones reales al esquema de tickets
+- [x] Implementar seed de base de datos para administrador, servicios y repartidores
+- [x] Añadir pruebas Vitest de módulos principales y validar responsive/flujo en escritorio y móvil
+
+## Pendientes técnicos de integración
+
+- [x] Implementar clientes con CRUD backend real mediante base de datos, router y UI
+- [x] Construir autenticación local completa con sesión de servidor y validación contra local_users
+- [x] Exponer el formulario de solicitud en una ruta pública accesible sin login
+- [x] Crear y ejecutar un seed real de base de datos para administrador, servicios y repartidores
+- [x] Añadir pruebas de flujos CRUD, autenticación, tickets, solicitud e impresión y comprobar responsive móvil
