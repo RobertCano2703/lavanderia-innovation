@@ -205,3 +205,9 @@
 - [x] Hacer funcional Estado con filtrado por estado del ticket
 - [x] Añadir pruebas de selección, alta rápida y filtros
 - [x] Verificar el flujo completo en escritorio y móvil
+
+## Ajustes reportados: cliente y domiciliario en Domicilios/Tickets
+- [x] Dejar Crear cliente únicamente como opción dentro del selector de clientes y quitar el botón duplicado
+- [x] Permitir seleccionar un domiciliario real en Nuevo/Editar domicilio y persistir la asignación
+- [x] Añadir pruebas para la opción desplegable de Crear cliente y la asignación de domiciliario
+- [x] Verificar el formulario corregido en escritorio y móvil

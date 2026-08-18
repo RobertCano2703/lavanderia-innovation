@@ -45,4 +45,19 @@ describe("regresiones de acceso y precios en la UI", () => {
     expect(home).toContain("Horarios de recogida");
     expect(home).toContain("Configuración guardada en esta sesión");
   });
+
+  it("deja Crear cliente únicamente dentro del selector de clientes", () => {
+    expect(home).toContain('<option value="__new__">+ Crear cliente nuevo</option>');
+    expect(home).not.toContain('className="inline-create-button"');
+    expect(home).not.toContain('>+ Crear cliente</Button>');
+  });
+
+  it("permite seleccionar domiciliarios activos y conserva uno asignado al editar", () => {
+    expect(home).toContain("couriers={couriers}");
+    expect(home).toContain('value={form.courier}');
+    expect(home).toContain('<option value="">Sin asignar</option>');
+    expect(home).toContain("courier.active || courier.name === form.courier");
+    expect(home).toContain('value={courier.name}');
+    expect(home).toContain("courier.phone");
+  });
 });
