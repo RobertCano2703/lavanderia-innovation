@@ -24,6 +24,10 @@ describe("regresiones de acceso y precios en la UI", () => {
     expect(home).toContain("servicePrice: service?.price || 0");
     expect(home).toContain("ticket.total");
     expect(home).toContain("window.print()");
+    expect(home).toContain("receipt-dialog");
+    expect(home).toContain("Vista previa de la tira térmica antes de imprimir");
+    expect(home).toContain("onPrint={t => setPreviewTicket(t)}");
+    expect(home).toContain("setPreviewTicket(null)");
   });
 
   it("mantiene el login sin credenciales demo y con navegación de marca", () => {

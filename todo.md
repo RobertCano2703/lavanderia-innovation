@@ -186,3 +186,13 @@
 - [x] Verificar en navegador la edición de un usuario creado desde el panel y confirmar el login con credenciales actualizadas
 - [x] Añadir una prueba automatizada de autenticación contra local_users con un usuario creado por Usuarios
 - [x] Añadir una prueba automatizada de CRUD persistente de Usuarios, incluyendo edición y eliminación
+
+## Vista previa interna de recibos
+- [x] Abrir una ventana interna de vista previa al pulsar imprimir desde Domicilios/Tickets
+- [x] Mostrar tira imprimible con botones Imprimir y Cerrar sin navegar a Dashboard
+- [x] Mantener el total, datos del cliente y formato térmico del recibo
+- [x] Añadir pruebas y verificar impresión, cancelación y responsive
+
+### Verificaciones pendientes de la vista previa
+- [x] Verificar la vista previa interna del recibo en viewport móvil y confirmar que conserva scroll y botones accesibles
+- [x] Probar el botón Imprimir y cancelar el diálogo del navegador, confirmando que permanece en Domicilios/Tickets
