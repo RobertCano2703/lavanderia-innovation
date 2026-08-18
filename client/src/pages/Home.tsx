@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type React from "react";
+import { trpc } from "@/lib/trpc";
 import {
   BarChart3, Bell, Check, ChevronDown, ClipboardList, Eye, FileText, LayoutDashboard,
   LogOut, Menu, Package, Pencil, Phone, Plus, Printer, Search, Settings, ShieldCheck,
@@ -178,6 +179,12 @@ export default function Home() {
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
   const [query, setQuery] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const ticketsQuery = trpc.tickets.list.useQuery(undefined, { retry: false });
+  const createPublicTicket = trpc.tickets.createPublic.useMutation();
+
+  useEffect(() => {
+    if (ticketsQuery.data) setTickets(ticketsQuery.data as typeof initialTickets);
+  }, [ticketsQuery.data]);
 
   const counts = useMemo(() => tickets.reduce((acc, t) => ({ ...acc, [t.status]: (acc[t.status] || 0) + 1 }), {} as Record<string, number>), [tickets]);
   const navItems: { key: Module; label: string; icon: typeof LayoutDashboard }[] = [
@@ -190,7 +197,7 @@ export default function Home() {
     { key: "solicitud", label: "Solicitud pública", icon: Phone },
   ];
 
-  if (!authenticated && publicMode) return <PublicLanding tickets={tickets} setTickets={setTickets} clients={clients} setClients={setClients} services={services} onAdmin={() => setPublicMode(false)} />;
+  if (!authenticated && publicMode) return <PublicLanding tickets={tickets} setTickets={setTickets} clients={clients} setClients={setClients} services={services} onAdmin={() => setPublicMode(false)} createPublicTicket={createPublicTicket} />;
   if (!authenticated) return <Login password={password} setPassword={setPassword} onLogin={() => password === "admin123" ? setAuthenticated(true) : toast.error("Contraseña incorrecta. Usa admin123 para la demo.")} />;
 
   const activeLabel = navItems.find(item => item.key === module)?.label || "Dashboard";
@@ -244,7 +251,7 @@ function PublicRequest() { const [name, setName] = useState(""); const [phone, s
 function Invoice({ ticket }: { ticket: typeof initialTickets[0] }) { return <><div className="invoice-heading no-print"><div><p className="eyebrow">FACTURACIÓN / {ticket.ticket}</p><h2>Factura</h2><p className="muted">Vista previa del recibo térmico.</p></div><Button onClick={() => window.print()}><Printer size={17} /> Imprimir</Button></div><div className="invoice-layout"><div className="invoice-preview"><div className="thermal-receipt"><div className="receipt-brand">LAVANDERIA<br />INNOVATION</div><div className="receipt-subtitle">LAVANDERÍA Y TINTORERÍA<br />Zipaquirá, Colombia<br />Tel. +57 300 000 0000</div><div className="receipt-line">================================</div><div className="receipt-meta"><span>TICKET: {ticket.ticket}</span><span>{new Date().toLocaleDateString("es-CO")}</span><span>{new Date().toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" })}</span></div><div className="receipt-line">--------------------------------</div><div className="receipt-section"><b>CLIENTE</b><span>{ticket.client}</span><span>Tel. +57 310 482 1930</span><span>Dirección registrada</span></div><div className="receipt-line">--------------------------------</div><div className="receipt-section"><b>SERVICIO</b><span>{ticket.service}</span><span>{ticket.clothes}</span><span>Estado: {ticket.status}</span></div><div className="receipt-line">--------------------------------</div><div className="receipt-total"><span>TOTAL</span><strong>{money(ticket.total)}</strong></div><div className="receipt-line">================================</div><div className="receipt-thanks">Gracias por confiar en<br />Lavanderia Innovation</div></div></div><div className="invoice-side no-print"><div className="panel invoice-info"><div className="panel-heading"><h3>Resumen del ticket</h3><span className={`status-badge ${statusStyles[ticket.status]}`}><i />{ticket.status}</span></div><div className="info-row"><span>Cliente</span><b>{ticket.client}</b></div><div className="info-row"><span>Recogida</span><b>{ticket.pickup}</b></div><div className="info-row"><span>Entrega</span><b>{ticket.delivery}</b></div><div className="info-row"><span>Domiciliario</span><b>{ticket.courier}</b></div><div className="info-row total-row"><span>Total</span><b>{money(ticket.total)}</b></div></div><Button className="print-full" onClick={() => window.print()}><Printer size={17} /> Imprimir factura</Button></div></div></>; }
 
 
-function PublicLanding({ tickets, setTickets, clients, setClients, services, onAdmin }: { tickets: typeof initialTickets; setTickets: React.Dispatch<React.SetStateAction<typeof initialTickets>>; clients: typeof initialClients; setClients: React.Dispatch<React.SetStateAction<typeof initialClients>>; services: typeof initialServices; onAdmin: () => void }) {
+function PublicLanding({ tickets, setTickets, clients, setClients, services, onAdmin, createPublicTicket }: { tickets: typeof initialTickets; setTickets: React.Dispatch<React.SetStateAction<typeof initialTickets>>; clients: typeof initialClients; setClients: React.Dispatch<React.SetStateAction<typeof initialClients>>; services: typeof initialServices; onAdmin: () => void; createPublicTicket: ReturnType<typeof trpc.tickets.createPublic.useMutation> }) {
   const activeServices = services.filter(service => service.active);
   const [showServices, setShowServices] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<ServiceCategory | "Todos">("Todos");
@@ -256,11 +263,18 @@ function PublicLanding({ tickets, setTickets, clients, setClients, services, onA
     if (!form.name || !form.phone || !form.address || !form.service || !form.clothes) return toast.error("Completa nombre, teléfono, dirección, servicio y prendas");
     const service = activeServices.find(item => item.name === form.service) || activeServices[0];
     const ticket = { id: Date.now(), ticket: `TK-${String(Date.now()).slice(-5)}`, client: form.name, service: form.service, courier: "Sin asignar", status: "Pendiente" as Status, total: service?.price || 0, pickup: form.pickup, delivery: form.delivery, clothes: form.clothes, notes: form.notes || "Solicitud recibida desde la web" };
-    setTickets(prev => [ticket, ...prev]);
-    setClients(prev => prev.some(client => client.phone === form.phone) ? prev : [...prev, { id: Date.now() + 1, name: form.name, phone: form.phone, email: form.email || "—", address: form.address }]);
     const message = `Hola, Lavanderia Innovation. Quiero confirmar mi pedido ${ticket.ticket}. Cliente: ${form.name}. Teléfono: ${form.phone}. Dirección: ${form.address}. Servicio: ${form.service}. Prendas: ${form.clothes}. Día: ${form.day}. Recogida: ${form.pickup}. Entrega: ${form.delivery}. Total estimado: ${money(ticket.total)}. ${form.notes}`;
-    setSent(true);
-    window.open(`https://wa.me/573226111910?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+    createPublicTicket.mutate({ ...form }, {
+      onSuccess: result => {
+        const persistedTicket = { ...ticket, id: result.id, ticket: result.ticketNumber, total: result.total };
+        setTickets(prev => [persistedTicket, ...prev.filter(item => item.ticket !== persistedTicket.ticket)]);
+        setClients(prev => prev.some(client => client.phone === form.phone) ? prev : [...prev, { id: Date.now() + 1, name: form.name, phone: form.phone, email: form.email || "—", address: form.address }]);
+        setSent(true);
+        window.open(`https://wa.me/573226111910?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+      },
+      onError: error => toast.error(`No se pudo guardar la solicitud: ${error.message}`),
+    });
+    return;
   };
   return <div className="public-site">
     <header className="public-nav"><a className="public-brand" href="#inicio"><img src="/manus-storage/banner-logo_e91b6326.jpeg" alt="Lavanderia Innovation" /><span>Lavanderia Innovation</span></a><nav><a href="#servicios" onClick={() => setShowServices(true)}>Servicios</a><a href="#pedido">Solicitar domicilio</a><a href="#contacto">Contacto</a></nav><button className="admin-access" onClick={onAdmin}><ShieldCheck size={16} /> Acceso administrativo</button></header>

@@ -139,3 +139,10 @@
 - [x] Cambiar “Ingresar al sistema” por “Acceder”
 - [x] Verificar que el acceso continúe funcionando después del cambio
 - [x] Probar en el navegador el botón “Acceder” y confirmar que abre el panel administrativo
+
+## Incidencia reportada: solicitud móvil no visible
+
+- [x] Reproducir el caso de una solicitud pública creada desde celular y revisar por qué no aparece en Domicilios / Tickets
+- [x] Garantizar persistencia y sincronización del pedido público en el panel administrativo
+- [x] Añadir pruebas de regresión para creación pública y visibilidad administrativa
+- [x] Verificar el flujo corregido en viewport móvil y escritorio
