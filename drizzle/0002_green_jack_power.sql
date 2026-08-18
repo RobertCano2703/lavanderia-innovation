@@ -1,0 +1,3 @@
+ALTER TABLE `tickets` ADD CONSTRAINT `tickets_clientId_clients_id_fk` FOREIGN KEY (`clientId`) REFERENCES `clients`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE `tickets` ADD CONSTRAINT `tickets_serviceId_services_id_fk` FOREIGN KEY (`serviceId`) REFERENCES `services`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE `tickets` ADD CONSTRAINT `tickets_deliveryPersonnelId_delivery_personnel_id_fk` FOREIGN KEY (`deliveryPersonnelId`) REFERENCES `delivery_personnel`(`id`) ON DELETE no action ON UPDATE no action;

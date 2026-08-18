@@ -1,33 +1,121 @@
-import { useAuth } from "@/_core/hooks/useAuth";
+import { useMemo, useState } from "react";
+import type React from "react";
+import {
+  BarChart3, Bell, Check, ChevronDown, ClipboardList, Eye, FileText, LayoutDashboard,
+  LogOut, Menu, Package, Pencil, Phone, Plus, Printer, Search, Settings, ShieldCheck,
+  Shirt, Trash2, Truck, UserCog, Users, X, Zap
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { Streamdown } from 'streamdown';
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { toast } from "sonner";
 
-/**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Workflow, Frontend Best Practices, Design Guide and Common Pitfalls
- */
+const navy = "#0b1b3d";
+type Module = "dashboard" | "clientes" | "servicios" | "domiciliarios" | "tickets" | "usuarios" | "factura";
+type Status = "Pendiente" | "EnProceso" | "Enrutado" | "Entregado" | "Cancelado";
+
+const statusStyles: Record<Status, string> = {
+  Pendiente: "status-pending",
+  EnProceso: "status-process",
+  Enrutado: "status-route",
+  Entregado: "status-done",
+  Cancelado: "status-cancelled",
+};
+
+const initialTickets = [
+  { id: 1, ticket: "TK-0008", client: "Mariana López", service: "Lavado + Secado", courier: "Carlos Méndez", status: "EnProceso" as Status, total: 42000, pickup: "10:00 AM - 12:00 PM", delivery: "1:00 PM - 4:00 PM", clothes: "2 edredones, ropa blanca", notes: "Entregar en recepción" },
+  { id: 2, ticket: "TK-0007", client: "Jorge Ramírez", service: "Lavado en seco", courier: "Ana Torres", status: "Enrutado" as Status, total: 28500, pickup: "9:00 AM - 11:00 AM", delivery: "2:00 PM - 5:00 PM", clothes: "Traje formal", notes: "Llamar antes de llegar" },
+  { id: 3, ticket: "TK-0006", client: "Sofía Castillo", service: "Planchado", courier: "—", status: "Pendiente" as Status, total: 16000, pickup: "2:00 PM - 4:00 PM", delivery: "6:00 PM - 8:00 PM", clothes: "12 camisas", notes: "" },
+  { id: 4, ticket: "TK-0005", client: "Diego Herrera", service: "Lavado + Doblado", courier: "Luis Pérez", status: "Entregado" as Status, total: 36000, pickup: "8:00 AM - 10:00 AM", delivery: "12:00 PM - 2:00 PM", clothes: "Ropa de diario", notes: "Pago recibido" },
+];
+const initialClients = [
+  { id: 1, name: "Mariana López", phone: "+57 310 482 1930", email: "mariana@email.com", address: "Carrera 12 # 8-42" },
+  { id: 2, name: "Jorge Ramírez", phone: "+57 315 290 4811", email: "jorge@email.com", address: "Calle 6 # 10-18" },
+  { id: 3, name: "Sofía Castillo", phone: "+57 300 774 1022", email: "sofia@email.com", address: "Diagonal 4 # 9-20" },
+  { id: 4, name: "Diego Herrera", phone: "+57 312 651 8802", email: "diego@email.com", address: "Carrera 8 # 14-05" },
+];
+const initialServices = [
+  { id: 1, name: "Lavado + Secado", description: "Lavado completo y secado industrial", price: 22000, active: true },
+  { id: 2, name: "Lavado en seco", description: "Cuidado especializado para prendas delicadas", price: 28500, active: true },
+  { id: 3, name: "Planchado", description: "Planchado profesional por docena", price: 16000, active: true },
+  { id: 4, name: "Lavado + Doblado", description: "Ropa lista para guardar", price: 18000, active: false },
+];
+const initialCouriers = [
+  { id: 1, name: "Carlos Méndez", phone: "+57 318 900 2211", active: true },
+  { id: 2, name: "Ana Torres", phone: "+57 301 442 8890", active: true },
+  { id: 3, name: "Luis Pérez", phone: "+57 316 775 0432", active: false },
+];
+
+function money(value: number) { return `$${value.toLocaleString("es-CO")}`; }
+function initials(name: string) { return name.split(" ").map(p => p[0]).slice(0, 2).join(""); }
+
 export default function Home() {
-  // The useAuth hook provides authentication state.
-  // To implement login/logout, call logout(), or start login from an event
-  // handler: onClick={() => startLogin()} (imported from "@/const"). Never call
-  // startLogin() during render (no href={startLogin()}) — it mints a one-time
-  // nonce cookie and must run only at the moment of navigation.
-  let { user, loading, error, isAuthenticated, logout } = useAuth();
+  const [authenticated, setAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [module, setModule] = useState<Module>("dashboard");
+  const [tickets, setTickets] = useState(initialTickets);
+  const [clients, setClients] = useState(initialClients);
+  const [services, setServices] = useState(initialServices);
+  const [couriers, setCouriers] = useState(initialCouriers);
+  const [selectedTicket, setSelectedTicket] = useState(initialTickets[0]);
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
+  const [query, setQuery] = useState("");
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
+  const counts = useMemo(() => tickets.reduce((acc, t) => ({ ...acc, [t.status]: (acc[t.status] || 0) + 1 }), {} as Record<string, number>), [tickets]);
+  const navItems: { key: Module; label: string; icon: typeof LayoutDashboard }[] = [
+    { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { key: "clientes", label: "Clientes", icon: Users },
+    { key: "servicios", label: "Servicios", icon: Shirt },
+    { key: "domiciliarios", label: "Domiciliarios", icon: Truck },
+    { key: "tickets", label: "Domicilios / Tickets", icon: ClipboardList },
+    { key: "usuarios", label: "Usuarios", icon: UserCog },
+    { key: "factura", label: "Facturación POS", icon: FileText },
+  ];
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
-      </main>
-    </div>
-  );
+  if (!authenticated) return <Login password={password} setPassword={setPassword} onLogin={() => password === "admin123" ? setAuthenticated(true) : toast.error("Contraseña incorrecta. Usa admin123 para la demo.")} />;
+
+  const activeLabel = navItems.find(item => item.key === module)?.label || "Dashboard";
+  const filteredClients = clients.filter(c => `${c.name} ${c.phone}`.toLowerCase().includes(query.toLowerCase()));
+
+  function removeTicket() {
+    if (deleteTarget === null) return;
+    setTickets(prev => prev.filter(t => t.id !== deleteTarget)); setDeleteTarget(null); toast.success("Ticket eliminado correctamente");
+  }
+  function chooseModule(next: Module) { setModule(next); setMobileOpen(false); }
+
+  return <div className="app-shell">
+    <aside className={`sidebar ${mobileOpen ? "sidebar-open" : ""}`}>
+      <div className="brand"><div className="brand-mark"><Shirt size={22} /></div><div><strong>Lavanderia</strong><span>Innovation</span></div></div>
+      <div className="workspace-label">OPERACIÓN</div>
+      <nav className="nav-list">{navItems.map(({ key, label, icon: Icon }) => <button key={key} onClick={() => chooseModule(key)} className={`nav-item ${module === key ? "active" : ""}`}><Icon size={18} /><span>{label}</span>{key === "tickets" && <em>{tickets.length}</em>}</button>)}</nav>
+      <div className="sidebar-bottom"><div className="support-card"><Zap size={16} /><div><b>Todo bajo control</b><small>Operación al día</small></div></div><button className="nav-item"><Settings size={18} /><span>Configuración</span></button><button className="profile-mini" onClick={() => setAuthenticated(false)}><div className="avatar">AD</div><div><b>Administrador</b><small>Cerrar sesión</small></div><LogOut size={16} /></button></div>
+    </aside>
+    <main className="main-area">
+      <header className="topbar"><button className="mobile-menu" onClick={() => setMobileOpen(!mobileOpen)}><Menu size={20} /></button><div><p className="eyebrow">OPERACIÓN / {activeLabel.toUpperCase()}</p><h1>{activeLabel}</h1></div><div className="top-actions"><div className="search-global"><Search size={17} /><input placeholder="Buscar..." value={query} onChange={e => setQuery(e.target.value)} /></div><button className="icon-button"><Bell size={18} /><i /></button><div className="top-profile"><div className="avatar small">AD</div><span>Administrador</span><ChevronDown size={15} /></div></div></header>
+      <div className="page-content">{module === "dashboard" && <Dashboard counts={counts} tickets={tickets} onNavigate={chooseModule} />}{module === "clientes" && <Clients clients={filteredClients} setClients={setClients} />}{module === "servicios" && <Services services={services} setServices={setServices} />}{module === "domiciliarios" && <Couriers couriers={couriers} setCouriers={setCouriers} />}{module === "tickets" && <Tickets tickets={tickets} onDelete={setDeleteTarget} onSelect={t => { setSelectedTicket(t); setModule("factura"); }} />}{module === "usuarios" && <UsersModule />}{module === "factura" && <Invoice ticket={selectedTicket} />}</div>
+    </main>
+    <Dialog open={deleteTarget !== null} onOpenChange={open => !open && setDeleteTarget(null)}><DialogContent><DialogHeader><DialogTitle>¿Eliminar ticket?</DialogTitle><DialogDescription>Esta acción eliminará el ticket y no se puede deshacer. Verifica la información antes de continuar.</DialogDescription></DialogHeader><DialogFooter><Button variant="outline" onClick={() => setDeleteTarget(null)}>Cancelar</Button><Button className="danger-button" onClick={removeTicket}><Trash2 size={16} /> Eliminar ticket</Button></DialogFooter></DialogContent></Dialog>
+  </div>;
 }
+
+function Login({ password, setPassword, onLogin }: { password: string; setPassword: (v: string) => void; onLogin: () => void }) { return <div className="login-page"><div className="login-art"><div className="art-orbit orbit-one" /><div className="art-orbit orbit-two" /><div className="login-art-copy"><div className="brand brand-light"><div className="brand-mark"><Shirt size={22} /></div><div><strong>Lavanderia</strong><span>Innovation</span></div></div><h1>Ordena tu operación.<br /><em>Eleva tu servicio.</em></h1><p>Una forma más inteligente de gestionar cada prenda, cada domicilio y cada cliente.</p></div><div className="login-art-footer">GESTIÓN INTERNA · ZIPAQUIRÁ, COLOMBIA</div></div><div className="login-panel"><div className="login-box"><div className="login-symbol"><ShieldCheck size={25} /></div><p className="eyebrow">ACCESO SEGURO</p><h2>Bienvenido de nuevo</h2><p className="muted">Ingresa a tu espacio de trabajo en Lavanderia Innovation.</p><label>Usuario</label><Input value="admin" readOnly /><label>Contraseña</label><Input type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === "Enter" && onLogin()} placeholder="Ingresa tu contraseña" /><Button className="login-button" onClick={onLogin}>Ingresar al sistema <ChevronDown size={17} className="rotate-neg90" /></Button><p className="demo-hint">Demo: admin / admin123</p></div><span className="login-copyright">© 2026 Lavanderia Innovation</span></div></div>; }
+
+function PageHeading({ title, description, action }: { title: string; description: string; action?: React.ReactNode }) { return <div className="page-heading"><div><p className="eyebrow">GESTIÓN</p><h2>{title}</h2><p className="muted">{description}</p></div>{action}</div>; }
+
+function Dashboard({ counts, tickets, onNavigate }: { counts: Record<string, number>; tickets: typeof initialTickets; onNavigate: (m: Module) => void }) { return <><div className="welcome-row"><div><p className="eyebrow">MARTES, 18 DE AGOSTO DE 2026</p><h2>Buenos días, Administrador <span>✦</span></h2><p className="muted">Este es el resumen de tu operación para hoy.</p></div><Button onClick={() => onNavigate("tickets")}><Plus size={17} /> Nuevo domicilio</Button></div><div className="metric-grid">{[{ label: "Pendientes", value: counts.Pendiente || 0, accent: "amber", icon: ClipboardList }, { label: "En proceso", value: counts.EnProceso || 0, accent: "blue", icon: Shirt }, { label: "Enrutados", value: counts.Enrutado || 0, accent: "violet", icon: Truck }, { label: "Entregados hoy", value: counts.Entregado || 0, accent: "green", icon: Check }].map(({ label, value, accent, icon: Icon }) => <div className="metric-card" key={label}><div className={`metric-icon ${accent}`}><Icon size={18} /></div><div><p>{label}</p><strong>{value.toString().padStart(2, "0")}</strong></div><span className="metric-trend">+12%</span></div>)}</div><div className="dashboard-grid"><section className="panel quick-panel"><div className="panel-heading"><div><h3>Accesos rápidos</h3><p className="muted">Lo que necesitas, a un clic.</p></div><BarChart3 size={18} className="muted-icon" /></div><div className="quick-grid">{[{ label: "Clientes", icon: Users, module: "clientes" as Module, color: "blue" }, { label: "Servicios", icon: Shirt, module: "servicios" as Module, color: "peach" }, { label: "Domiciliarios", icon: Truck, module: "domiciliarios" as Module, color: "mint" }, { label: "Facturación", icon: FileText, module: "factura" as Module, color: "lavender" }].map(({ label, icon: Icon, module, color }) => <button className="quick-item" onClick={() => onNavigate(module)} key={label}><div className={`quick-icon ${color}`}><Icon size={19} /></div><span>{label}</span><ChevronDown size={14} className="quick-arrow" /></button>)}</div></section><section className="panel status-panel"><div className="panel-heading"><div><h3>Estado de domicilios</h3><p className="muted">Distribución de tickets activos.</p></div></div><div className="status-bars">{(["Pendiente", "EnProceso", "Enrutado", "Entregado"] as Status[]).map(s => <div className="status-bar-row" key={s}><div><span className={`dot ${statusStyles[s]}`} /><span>{s}</span><b>{counts[s] || 0}</b></div><div className="bar"><span className={statusStyles[s]} style={{ width: `${Math.max(8, ((counts[s] || 0) / Math.max(1, tickets.length)) * 100)}%` }} /></div></div>)}</div></section></div><section className="panel recent-panel"><div className="panel-heading"><div><h3>Actividad reciente</h3><p className="muted">Últimos domicilios registrados.</p></div><Button variant="ghost" onClick={() => onNavigate("tickets")}>Ver todos <ChevronDown size={15} className="rotate-neg90" /></Button></div><TicketTable tickets={tickets.slice(0, 3)} compact /></section></>; }
+
+function Clients({ clients, setClients }: { clients: typeof initialClients; setClients: React.Dispatch<React.SetStateAction<typeof initialClients>> }) { const add = () => { const name = window.prompt("Nombre del cliente"); if (!name) return; const phone = window.prompt("Teléfono") || "Sin teléfono"; const address = window.prompt("Dirección") || "Por registrar"; setClients(prev => [...prev, { id: Date.now(), name, phone, email: "", address }]); toast.success("Cliente creado"); }; const edit = (c: typeof initialClients[0]) => { const name = window.prompt("Editar nombre", c.name); if (!name) return; setClients(prev => prev.map(item => item.id === c.id ? { ...item, name } : item)); toast.success("Cliente actualizado"); }; const remove = (c: typeof initialClients[0]) => { if (window.confirm(`¿Eliminar a ${c.name}?`)) { setClients(prev => prev.filter(item => item.id !== c.id)); toast.success("Cliente eliminado"); } }; return <><PageHeading title="Clientes" description="Administra la información de tus clientes y sus direcciones." action={<Button onClick={add}><Plus size={17} /> Nuevo Cliente</Button>} /><div className="panel table-panel"><div className="table-toolbar"><div className="table-count">{clients.length} clientes registrados</div><Button variant="outline"><Search size={16} /> Filtrar</Button></div><table><thead><tr><th>CLIENTE</th><th>CONTACTO</th><th>DIRECCIÓN</th><th>ACCIONES</th></tr></thead><tbody>{clients.map(c => <tr key={c.id}><td><div className="person-cell"><div className="avatar table-avatar">{initials(c.name)}</div><div><b>{c.name}</b><small>Cliente #{String(c.id).padStart(3, "0")}</small></div></div></td><td><span>{c.phone}</span><small>{c.email || "Correo no registrado"}</small></td><td>{c.address}<small>Zipaquirá, Colombia</small></td><td><div className="row-actions"><button onClick={() => toast.info(`${c.name} · ${c.phone} · ${c.address}`)}><Eye size={16} /></button><button onClick={() => edit(c)}><Pencil size={16} /></button><button onClick={() => remove(c)}><Trash2 size={16} /></button></div></td></tr>)}</tbody></table></div></>; }
+
+function Services({ services, setServices }: { services: typeof initialServices; setServices: React.Dispatch<React.SetStateAction<typeof initialServices>> }) { return <><PageHeading title="Servicios" description="Configura el catálogo que ofrece Lavanderia Innovation." action={<Button onClick={() => toast.success("Formulario de nuevo servicio listo")}><Plus size={17} /> Nuevo Servicio</Button>} /><div className="service-grid">{services.map(s => <div className={`service-card ${!s.active ? "inactive" : ""}`} key={s.id}><div className="service-top"><div className="service-icon"><Shirt size={20} /></div><Switch checked={s.active} onCheckedChange={checked => setServices(prev => prev.map(item => item.id === s.id ? { ...item, active: checked } : item))} /></div><h3>{s.name}</h3><p>{s.description}</p><div className="service-bottom"><strong>{money(s.price)}</strong><span className={s.active ? "active-label" : "inactive-label"}>{s.active ? "Activo" : "Inactivo"}</span></div></div>)}</div></>; }
+
+function Couriers({ couriers, setCouriers }: { couriers: typeof initialCouriers; setCouriers: React.Dispatch<React.SetStateAction<typeof initialCouriers>> }) { return <><PageHeading title="Domiciliarios" description="Gestiona tu equipo de entrega y su disponibilidad." action={<Button onClick={() => toast.success("Formulario de nuevo domiciliario listo")}><Plus size={17} /> Nuevo domiciliario</Button>} /><div className="courier-grid">{couriers.map(c => <div className="courier-card" key={c.id}><div className="person-cell"><div className="avatar table-avatar courier-avatar">{initials(c.name)}</div><div><b>{c.name}</b><small><Phone size={12} /> {c.phone}</small></div></div><div className="courier-footer"><span className={c.active ? "active-label" : "inactive-label"}>{c.active ? "Disponible" : "No disponible"}</span><Switch checked={c.active} onCheckedChange={checked => setCouriers(prev => prev.map(item => item.id === c.id ? { ...item, active: checked } : item))} /></div></div>)}</div></>; }
+
+function Tickets({ tickets, onDelete, onSelect }: { tickets: typeof initialTickets; onDelete: (id: number) => void; onSelect: (ticket: typeof initialTickets[0]) => void }) { return <><PageHeading title="Domicilios / Tickets" description="Controla el ciclo completo de cada solicitud." action={<Button onClick={() => toast.success("Formulario de nuevo domicilio listo")}><Plus size={17} /> Nuevo domicilio</Button>} /><div className="panel table-panel ticket-panel"><div className="table-toolbar"><div className="table-count"><span className="live-dot" /> {tickets.length} tickets en operación</div><div className="toolbar-actions"><Button variant="outline"><Search size={16} /> Buscar ticket</Button><Button variant="outline"><ClipboardList size={16} /> Estado <ChevronDown size={14} /></Button></div></div><TicketTable tickets={tickets} onDelete={onDelete} onSelect={onSelect} /></div></>; }
+function TicketTable({ tickets, compact = false, onDelete, onSelect }: { tickets: typeof initialTickets; compact?: boolean; onDelete?: (id: number) => void; onSelect?: (ticket: typeof initialTickets[0]) => void }) { return <div className="table-scroll"><table><thead><tr><th>TICKET</th><th>CLIENTE</th><th>SERVICIO</th>{!compact && <th>DOMICILIARIO</th>}<th>ESTADO</th><th>VALOR</th><th>ACCIONES</th></tr></thead><tbody>{tickets.map(t => <tr key={t.id}><td><button className="ticket-link" onClick={() => onSelect?.(t)}>{t.ticket}</button><small>{t.pickup}</small></td><td><b>{t.client}</b><small>{t.delivery}</small></td><td>{t.service}</td>{!compact && <td>{t.courier}</td>}<td><span className={`status-badge ${statusStyles[t.status]}`}><i />{t.status}</span></td><td><b>{money(t.total)}</b></td><td><div className="row-actions"><button onClick={() => onSelect?.(t)}><Eye size={16} /></button><button onClick={() => toast.success("Ticket listo para editar")}><Pencil size={16} /></button>{onDelete && <button onClick={() => onDelete(t.id)}><Trash2 size={16} /></button>}</div></td></tr>)}</tbody></table></div>; }
+
+function UsersModule() { return <><PageHeading title="Usuarios" description="Administra accesos y roles del equipo interno." action={<Button onClick={() => toast.success("Formulario de nuevo usuario listo")}><Plus size={17} /> Nuevo usuario</Button>} /><div className="panel user-summary"><div className="user-summary-icon"><ShieldCheck size={22} /></div><div><h3>Autenticación local activa</h3><p className="muted">Los usuarios ingresan con contraseña propia y roles diferenciados.</p></div><span className="active-label">Protegido</span></div><div className="panel table-panel"><table><thead><tr><th>USUARIO</th><th>ROL</th><th>ÚLTIMO ACCESO</th><th>ESTADO</th><th>ACCIONES</th></tr></thead><tbody><tr><td><div className="person-cell"><div className="avatar table-avatar">AD</div><div><b>admin</b><small>Administrador principal</small></div></div></td><td><span className="role-badge admin">Administrador</span></td><td>Hoy, 8:42 AM</td><td><span className="active-label">Activo</span></td><td><div className="row-actions"><button><Pencil size={16} /></button><button><Trash2 size={16} /></button></div></td></tr><tr><td><div className="person-cell"><div className="avatar table-avatar">EM</div><div><b>empleado.demo</b><small>Operación de mostrador</small></div></div></td><td><span className="role-badge employee">Empleado</span></td><td>Ayer, 4:10 PM</td><td><span className="active-label">Activo</span></td><td><div className="row-actions"><button><Pencil size={16} /></button><button><Trash2 size={16} /></button></div></td></tr></tbody></table></div></>; }
+
+function Invoice({ ticket }: { ticket: typeof initialTickets[0] }) { return <><div className="invoice-heading no-print"><div><p className="eyebrow">FACTURACIÓN / {ticket.ticket}</p><h2>Factura</h2><p className="muted">Vista previa del recibo térmico.</p></div><Button onClick={() => window.print()}><Printer size={17} /> Imprimir</Button></div><div className="invoice-layout"><div className="invoice-preview"><div className="thermal-receipt"><div className="receipt-brand">LAVANDERIA<br />INNOVATION</div><div className="receipt-subtitle">LAVANDERÍA Y TINTORERÍA<br />Zipaquirá, Colombia<br />Tel. +57 300 000 0000</div><div className="receipt-line">================================</div><div className="receipt-meta"><span>TICKET: {ticket.ticket}</span><span>{new Date().toLocaleDateString("es-CO")}</span><span>{new Date().toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" })}</span></div><div className="receipt-line">--------------------------------</div><div className="receipt-section"><b>CLIENTE</b><span>{ticket.client}</span><span>Tel. +57 310 482 1930</span><span>Dirección registrada</span></div><div className="receipt-line">--------------------------------</div><div className="receipt-section"><b>SERVICIO</b><span>{ticket.service}</span><span>{ticket.clothes}</span><span>Estado: {ticket.status}</span></div><div className="receipt-line">--------------------------------</div><div className="receipt-total"><span>TOTAL</span><strong>{money(ticket.total)}</strong></div><div className="receipt-line">================================</div><div className="receipt-thanks">Gracias por confiar en<br />Lavanderia Innovation</div></div></div><div className="invoice-side no-print"><div className="panel invoice-info"><div className="panel-heading"><h3>Resumen del ticket</h3><span className={`status-badge ${statusStyles[ticket.status]}`}><i />{ticket.status}</span></div><div className="info-row"><span>Cliente</span><b>{ticket.client}</b></div><div className="info-row"><span>Recogida</span><b>{ticket.pickup}</b></div><div className="info-row"><span>Entrega</span><b>{ticket.delivery}</b></div><div className="info-row"><span>Domiciliario</span><b>{ticket.courier}</b></div><div className="info-row total-row"><span>Total</span><b>{money(ticket.total)}</b></div></div><Button className="print-full" onClick={() => window.print()}><Printer size={17} /> Imprimir factura</Button></div></div></>; }
