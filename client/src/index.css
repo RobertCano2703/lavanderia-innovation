@@ -94,3 +94,69 @@ button { cursor:pointer; }
 .public-footer a { display:flex; align-items:center; gap:6px; color:#13884e; font-weight:800; text-decoration:none; }
 .public-footer button { border:0; background:transparent; color:#6a7f86; font-size:11px; font-weight:700; }
 @media (max-width:800px) { .public-nav { padding:10px 16px; }.public-nav nav { display:none; }.public-brand img { width:104px; }.admin-access { padding:9px; font-size:0; }.admin-access svg { width:17px; }.public-hero { grid-template-columns:1fr; min-height:auto; padding:42px 22px 50px; }.public-hero h1 { font-size:48px; letter-spacing:-2px; }.hero-art { order:-1; }.hero-art img { width:235px; max-height:300px; }.promo-strip { margin:28px 16px; grid-template-columns:100px 1fr; gap:17px; padding:16px; }.promo-strip img { width:100px; height:100px; }.promo-strip h2 { font-size:21px; }.public-services,.order-section { padding-left:16px; padding-right:16px; }.public-service-grid { grid-template-columns:1fr 1fr; }.public-order-card { padding:20px 16px; }.order-form-grid { grid-template-columns:1fr; gap:13px; }.field-full { grid-column:auto; }.order-submit-row { align-items:stretch; flex-direction:column; }.order-submit-row button { justify-content:center; }.public-footer { margin:0 16px; padding-left:0; padding-right:0; flex-wrap:wrap; }.public-footer > div { flex-basis:100%; } }
+
+
+/* Catálogo segmentado */
+.segment-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 1rem 0 1.25rem;
+}
+
+.segment-tabs button {
+  border: 1px solid #d7e3dc;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #35515a;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.58rem 0.9rem;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.segment-tabs button:hover {
+  border-color: #1b9a5b;
+  color: #0f7f48;
+  transform: translateY(-1px);
+}
+
+.segment-tabs button.active {
+  border-color: #0f8d4d;
+  background: #0f8d4d;
+  color: #ffffff;
+}
+
+.service-category {
+  align-self: flex-start;
+  border-radius: 999px;
+  background: #e6f6ed;
+  color: #0b7745;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  margin-top: 0.65rem;
+  padding: 0.3rem 0.55rem;
+  text-transform: uppercase;
+}
+
+.public-segment-tabs {
+  margin-top: 1.5rem;
+}
+
+.public-segment-tabs button {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+@media (max-width: 640px) {
+  .segment-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.35rem;
+  }
+
+  .segment-tabs button {
+    flex: 0 0 auto;
+  }
+}

@@ -113,7 +113,7 @@ const expectedCatalog = `
 
 describe("catálogo de servicios de Lavanderia Innovation", () => {
   const source = readFileSync(resolve(process.cwd(), "client/src/pages/Home.tsx"), "utf8");
-  const catalogBlock = source.match(/const initialServices = \[(.*?)\n\];/s)?.[1] ?? "";
+  const catalogBlock = source.match(/const baseServices = \[(.*?)\n\];/s)?.[1] ?? "";
   const records = [...catalogBlock.matchAll(/\{ id: (\d+), name: "([^"]+)", description: "[^"]+", price: (\d+), active: true \}/g)].map((match) => ({
     id: Number(match[1]),
     name: match[2],
@@ -123,5 +123,42 @@ describe("catálogo de servicios de Lavanderia Innovation", () => {
   it("coincide exactamente con el listado entregado y excluye el código 98", () => {
     expect(records).toEqual(expectedCatalog);
     expect(records.some((record) => record.id === 98)).toBe(false);
+  });
+});
+
+
+describe("segmentación explícita del catálogo", () => {
+  const source = readFileSync(resolve(process.cwd(), "client/src/pages/Home.tsx"), "utf8");
+  const mappingBlock = source.match(/const categoryByServiceId: Record<number, ServiceCategory> = \{(.*?)\n\};/s)?.[1] ?? "";
+  const categories = [...mappingBlock.matchAll(/(\d+): "(Ropa de mujer|Ropa de hombre|Camas|Muebles|Niños)"/g)].map((match) => ({ id: Number(match[1]), category: match[2] }));
+
+  it("asigna un segmento válido a cada uno de los 103 servicios", () => {
+    expect(categories).toHaveLength(103);
+    expect(new Set(categories.map((item) => item.id))).toHaveLength(103);
+    expect(categories.some((item) => item.id === 98)).toBe(false);
+    expect(categories.find((item) => item.id === 20)?.category).toBe("Ropa de mujer");
+    expect(categories.find((item) => item.id === 40)?.category).toBe("Camas");
+    expect(categories.find((item) => item.id === 51)?.category).toBe("Muebles");
+    expect(categories.find((item) => item.id === 84)?.category).toBe("Niños");
+    expect(categories.find((item) => item.id === 1)?.category).toBe("Ropa de hombre");
+  });
+});
+
+
+describe("mapeo completo de segmentos", () => {
+  const source = readFileSync(resolve(process.cwd(), "client/src/pages/Home.tsx"), "utf8");
+  const mappingBlock = source.match(/const categoryByServiceId: Record<number, ServiceCategory> = \{(.*?)\n\};/s)?.[1] ?? "";
+  const actual = [...mappingBlock.matchAll(/(\d+): "(Ropa de mujer|Ropa de hombre|Camas|Muebles|Niños)"/g)].map((match) => ({ id: Number(match[1]), category: match[2] })).sort((a, b) => a.id - b.id);
+  const expectedGroups: Record<string, number[]> = {
+    "Ropa de mujer": [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 34, 58, 59, 60, 61, 62, 73],
+    "Camas": [38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 74, 75, 76, 79, 80, 93, 100, 103],
+    "Muebles": [51, 52, 53, 54, 55, 56, 65, 66, 70, 85, 86, 91, 95, 99],
+    "Niños": [57, 84, 87, 89, 94],
+    "Ropa de hombre": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 30, 31, 32, 33, 35, 36, 37, 63, 64, 67, 68, 69, 71, 72, 77, 78, 81, 82, 83, 88, 90, 92, 96, 97, 101, 102, 104],
+  };
+  const expected = Object.entries(expectedGroups).flatMap(([category, ids]) => ids.map((id) => ({ id, category }))).sort((a, b) => a.id - b.id);
+
+  it("coincide exactamente con la clasificación documentada", () => {
+    expect(actual).toEqual(expected);
   });
 });

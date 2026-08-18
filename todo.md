@@ -91,3 +91,28 @@
 
 - [x] Inicializar la solicitud pública con el primer servicio activo real y manejar catálogo vacío
 - [x] Validar exhaustivamente nombre y precio de cada uno de los 103 registros
+
+## Segmentación del catálogo
+
+- [x] Clasificar los servicios en Ropa de mujer, Ropa de hombre, Camas, Muebles y Niños
+- [x] Mostrar navegación o filtros por segmento en el catálogo público
+- [x] Mostrar la categoría en el módulo administrativo de servicios
+- [x] Verificar que todos los servicios conserven su precio y queden clasificados
+
+## Precisión de segmentos
+
+- [x] Sustituir la clasificación heurística por un mapeo explícito para los 103 servicios
+- [x] Revisar manualmente los servicios ambiguos y asignarlos a un segmento coherente
+- [x] Añadir una prueba Vitest que valide la categoría esperada de cada servicio
+- [x] Revisar visualmente segmentos público y administrativo con servicios representativos
+
+## Evidencia adicional de segmentación
+
+- [x] Documentar la categoría asignada a servicios ambiguos como Servicio Extra, Otra Prenda, Tintura Prenda, Toalla y Muñeco
+- [x] Ampliar la prueba para comparar la categoría esperada de los 103 servicios
+- [x] Capturar y registrar la revisión visual del módulo administrativo de servicios segmentado
+
+## Verificación administrativa de segmentos
+
+- [x] Capturar el módulo administrativo de servicios con sus filtros y categorías visibles
+- [x] Registrar que los segmentos administrativos funcionan con tarjetas representativas
