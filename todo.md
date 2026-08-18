@@ -45,3 +45,9 @@
 - [x] Rediseñar el panel de domicilios según la imagen de referencia
 - [x] Implementar crear, editar y eliminar usuarios
 - [x] Verificar formularios, modales, acciones y responsive en navegador
+
+## Corrección visual solicitada
+
+- [x] Corregir transparencia de modales y formularios de creación
+- [x] Asegurar fondo opaco, campos legibles y contraste adecuado en diálogos
+- [x] Verificar la corrección en escritorio y móvil
