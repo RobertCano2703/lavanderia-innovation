@@ -33,3 +33,15 @@
 - [x] Exponer el formulario de solicitud en una ruta pública accesible sin login
 - [x] Crear y ejecutar un seed real de base de datos para administrador, servicios y repartidores
 - [x] Añadir pruebas de flujos CRUD, autenticación, tickets, solicitud e impresión y comprobar responsive móvil
+
+## Mejoras solicitadas por el usuario
+
+- [x] Crear formulario completo de clientes con nombres, apellidos, teléfono, dirección y correo
+- [x] Rediseñar modal de eliminación de clientes con confirmación visual mejorada
+- [x] Implementar crear, editar y eliminar servicios
+- [x] Implementar crear, editar y eliminar domiciliarios
+- [x] Implementar cambio de estado, creación y edición de domicilios
+- [x] Integrar impresión dentro de las acciones de cada domicilio
+- [x] Rediseñar el panel de domicilios según la imagen de referencia
+- [x] Implementar crear, editar y eliminar usuarios
+- [x] Verificar formularios, modales, acciones y responsive en navegador
