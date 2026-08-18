@@ -68,3 +68,26 @@
 - [x] Configurar sábados únicamente de 9:30 a. m. a 12:00 p. m.
 - [x] Bloquear domingos como día sin servicio en la solicitud pública
 - [x] Mostrar los horarios disponibles de forma clara al cliente
+
+## Catálogo real de servicios
+
+- [x] Reemplazar los servicios de ejemplo por los 47 productos proporcionados
+- [x] Configurar los precios exactos en pesos colombianos
+- [x] Mantener los servicios disponibles en el catálogo público y administrativo
+- [x] Confirmar el precio faltante de “Juego S” antes de cerrar el catálogo
+- [x] Verificar nombres, códigos, orden y precios del catálogo
+
+## Corrección del catálogo
+
+- [x] Eliminar el servicio con código 98 “No aparece en el documento”
+- [x] Verificar que el catálogo conserve los demás códigos y no muestre el registro 98
+
+## Validación adicional del catálogo
+
+- [x] Conectar el catálogo público al estado actualizado de servicios administrativos
+- [x] Añadir una prueba explícita de códigos, precios, orden y ausencia del código 98
+
+## Robustez final del catálogo
+
+- [x] Inicializar la solicitud pública con el primer servicio activo real y manejar catálogo vacío
+- [x] Validar exhaustivamente nombre y precio de cada uno de los 103 registros

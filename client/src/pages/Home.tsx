@@ -37,10 +37,109 @@ const initialClients = [
   { id: 4, name: "Diego Herrera", phone: "+57 312 651 8802", email: "diego@email.com", address: "Carrera 8 # 14-05" },
 ];
 const initialServices = [
-  { id: 1, name: "Lavado + Secado", description: "Lavado completo y secado industrial", price: 22000, active: true },
-  { id: 2, name: "Lavado en seco", description: "Cuidado especializado para prendas delicadas", price: 28500, active: true },
-  { id: 3, name: "Planchado", description: "Planchado profesional por docena", price: 16000, active: true },
-  { id: 4, name: "Lavado + Doblado", description: "Ropa lista para guardar", price: 18000, active: false },
+  { id: 1, name: "Camisa", description: "Camisa", price: 8000, active: true },
+  { id: 2, name: "Camiseta", description: "Camiseta", price: 8000, active: true },
+  { id: 3, name: "Pantalón", description: "Pantalón", price: 9000, active: true },
+  { id: 4, name: "Jeans", description: "Jeans", price: 9000, active: true },
+  { id: 5, name: "Vestido Hombre 2 Pzs.", description: "Vestido Hombre 2 Pzs.", price: 17000, active: true },
+  { id: 6, name: "Corbata", description: "Corbata", price: 4000, active: true },
+  { id: 7, name: "Corbata Cortesía", description: "Corbata Cortesía", price: 0, active: true },
+  { id: 8, name: "Chaqueta Sencilla", description: "Chaqueta Sencilla", price: 11000, active: true },
+  { id: 9, name: "Chaqueta Acolchada", description: "Chaqueta Acolchada", price: 12000, active: true },
+  { id: 10, name: "Chaqueta Moto", description: "Chaqueta Moto", price: 16000, active: true },
+  { id: 11, name: "Chaqueta De Plumas", description: "Chaqueta De Plumas", price: 16000, active: true },
+  { id: 12, name: "Chaqueta De Cuerina", description: "Chaqueta De Cuerina", price: 17000, active: true },
+  { id: 13, name: "Gaban", description: "Gaban", price: 13000, active: true },
+  { id: 14, name: "Abrigo", description: "Abrigo", price: 15000, active: true },
+  { id: 15, name: "Blazer", description: "Blazer", price: 11000, active: true },
+  { id: 16, name: "Suéter", description: "Suéter", price: 10000, active: true },
+  { id: 17, name: "Buso", description: "Buso", price: 10000, active: true },
+  { id: 18, name: "Chaleco Sencillo", description: "Chaleco Sencillo", price: 10000, active: true },
+  { id: 19, name: "Chaleco Plumas", description: "Chaleco Plumas", price: 15000, active: true },
+  { id: 20, name: "Blusa", description: "Blusa", price: 8000, active: true },
+  { id: 21, name: "Falda", description: "Falda", price: 9000, active: true },
+  { id: 22, name: "Jardinera", description: "Jardinera", price: 11000, active: true },
+  { id: 23, name: "Bata Dama", description: "Bata Dama", price: 15000, active: true },
+  { id: 24, name: "Vestido Dama 2 Pzs.", description: "Vestido Dama 2 Pzs.", price: 17000, active: true },
+  { id: 25, name: "Enterizo", description: "Enterizo", price: 13000, active: true },
+  { id: 26, name: "Sudadera", description: "Sudadera", price: 18000, active: true },
+  { id: 27, name: "Chal", description: "Chal", price: 10000, active: true },
+  { id: 28, name: "Bufanda", description: "Bufanda", price: 8000, active: true },
+  { id: 29, name: "Ruana", description: "Ruana", price: 17000, active: true },
+  { id: 30, name: "Bermuda", description: "Bermuda", price: 9000, active: true },
+  { id: 31, name: "Botas", description: "Botas", price: 16000, active: true },
+  { id: 32, name: "Tenis", description: "Tenis", price: 16000, active: true },
+  { id: 33, name: "Gorra", description: "Gorra", price: 7000, active: true },
+  { id: 34, name: "Bolso Dama", description: "Bolso Dama", price: 16000, active: true },
+  { id: 35, name: "Mortal", description: "Mortal", price: 18000, active: true },
+  { id: 36, name: "Maleta Viaje", description: "Maleta Viaje", price: 18000, active: true },
+  { id: 37, name: "Overol", description: "Overol", price: 16000, active: true },
+  { id: 38, name: "Almohada Sencilla", description: "Almohada Sencilla", price: 13000, active: true },
+  { id: 39, name: "Almohada De Plumas", description: "Almohada De Plumas", price: 16000, active: true },
+  { id: 40, name: "Edredón Sencillo", description: "Edredón Sencillo", price: 25000, active: true },
+  { id: 41, name: "Edredón Doble", description: "Edredón Doble", price: 30000, active: true },
+  { id: 42, name: "Edredón Queen", description: "Edredón Queen", price: 32000, active: true },
+  { id: 43, name: "Edredón Plumas Sencillo", description: "Edredón Plumas Sencillo", price: 38000, active: true },
+  { id: 44, name: "Edredón Plumas Doble", description: "Edredón Plumas Doble", price: 40000, active: true },
+  { id: 45, name: "Edredón Plumas Queen", description: "Edredón Plumas Queen", price: 42000, active: true },
+  { id: 46, name: "Duvet", description: "Duvet", price: 20000, active: true },
+  { id: 47, name: "Juego Sábanas", description: "Juego Sábanas", price: 18000, active: true },
+  { id: 48, name: "Cobija Sencilla", description: "Cobija Sencilla", price: 23000, active: true },
+  { id: 49, name: "Cobija Doble", description: "Cobija Doble", price: 26000, active: true },
+  { id: 50, name: "Hamaca", description: "Hamaca", price: 20000, active: true },
+  { id: 51, name: "Cojín Relleno", description: "Cojín Relleno", price: 10000, active: true },
+  { id: 52, name: "Mantel", description: "Mantel", price: 12000, active: true },
+  { id: 53, name: "Toalla", description: "Toalla", price: 40000, active: true },
+  { id: 54, name: "Cortina Velo Metro", description: "Cortina Velo Metro", price: 8000, active: true },
+  { id: 55, name: "Cortina Pesada Metro", description: "Cortina Pesada Metro", price: 8000, active: true },
+  { id: 56, name: "Tapete Mt Cuadrado", description: "Tapete Mt Cuadrado", price: 38000, active: true },
+  { id: 57, name: "Muñeco", description: "Muñeco", price: 20000, active: true },
+  { id: 58, name: "Vestido Novia", description: "Vestido Novia", price: 35000, active: true },
+  { id: 59, name: "Vestido Quinceañera", description: "Vestido Quinceañera", price: 35000, active: true },
+  { id: 60, name: "Vestido Fiesta Corto", description: "Vestido Fiesta Corto", price: 13000, active: true },
+  { id: 61, name: "Vestido Fiesta Largo", description: "Vestido Fiesta Largo", price: 16000, active: true },
+  { id: 62, name: "Vestido Primera Comunión", description: "Vestido Primera Comunión", price: 35000, active: true },
+  { id: 63, name: "Tintura Prenda", description: "Tintura Prenda", price: 28000, active: true },
+  { id: 64, name: "Solo Plancha", description: "Solo Plancha", price: 6000, active: true },
+  { id: 65, name: "Forros De Carro Unidad", description: "Forros De Carro Unidad", price: 40000, active: true },
+  { id: 66, name: "Bolsa De Lavado", description: "Bolsa De Lavado", price: 45000, active: true },
+  { id: 67, name: "Boxer", description: "Boxer", price: 5000, active: true },
+  { id: 68, name: "Par Medias", description: "Par Medias", price: 5000, active: true },
+  { id: 69, name: "Sotana", description: "Sotana", price: 18000, active: true },
+  { id: 70, name: "Forro De Silla", description: "Forro De Silla", price: 40000, active: true },
+  { id: 71, name: "Togas", description: "Togas", price: 15000, active: true },
+  { id: 72, name: "Birretes", description: "Birretes", price: 5000, active: true },
+  { id: 73, name: "Abrigo Corto", description: "Abrigo Corto", price: 11000, active: true },
+  { id: 74, name: "Colcha Sencilla", description: "Colcha Sencilla", price: 25000, active: true },
+  { id: 75, name: "Protector De Colchón Sencillo", description: "Protector De Colchón Sencillo", price: 20000, active: true },
+  { id: 76, name: "Protector De Colchón Doble", description: "Protector De Colchón Doble", price: 22000, active: true },
+  { id: 77, name: "Buso Capota", description: "Buso Capota", price: 11000, active: true },
+  { id: 78, name: "Suéter", description: "Suéter", price: 10000, active: true },
+  { id: 79, name: "Colcha", description: "Colcha", price: 26000, active: true },
+  { id: 80, name: "Edredón Sencillo", description: "Edredón Sencillo", price: 26000, active: true },
+  { id: 81, name: "Chaleco Traje", description: "Chaleco Traje", price: 8000, active: true },
+  { id: 82, name: "Servicio Extra", description: "Servicio Extra", price: 5000, active: true },
+  { id: 83, name: "Vestido Tres Piezas Hombre", description: "Vestido Tres Piezas Hombre", price: 25000, active: true },
+  { id: 84, name: "Vestido Tres Piezas Niño", description: "Vestido Tres Piezas Niño", price: 17000, active: true },
+  { id: 85, name: "Protector Colchón", description: "Protector Colchón", price: 20000, active: true },
+  { id: 86, name: "Protector Sofa", description: "Protector Sofa", price: 23000, active: true },
+  { id: 87, name: "Prenda Niño", description: "Prenda Niño", price: 7000, active: true },
+  { id: 88, name: "Bata Laboratorio", description: "Bata Laboratorio", price: 12000, active: true },
+  { id: 89, name: "Prendas Navidad", description: "Prendas Navidad", price: 12000, active: true },
+  { id: 90, name: "Pantalón Sintético", description: "Pantalón Sintético", price: 15000, active: true },
+  { id: 91, name: "Protector Colchón", description: "Protector Colchón", price: 18000, active: true },
+  { id: 92, name: "Buso", description: "Buso", price: 11000, active: true },
+  { id: 93, name: "Hamaca", description: "Hamaca", price: 18000, active: true },
+  { id: 94, name: "Colchoneta Bebé", description: "Colchoneta Bebé", price: 24000, active: true },
+  { id: 95, name: "Cama De Mascota", description: "Cama De Mascota", price: 25000, active: true },
+  { id: 96, name: "Servicio Extra", description: "Servicio Extra", price: 5000, active: true },
+  { id: 97, name: "Otra Prenda", description: "Otra Prenda", price: 0, active: true },
+  { id: 99, name: "Media Bolsa Lavado", description: "Media Bolsa Lavado", price: 30000, active: true },
+  { id: 100, name: "Edredón Ovejero", description: "Edredón Ovejero", price: 32000, active: true },
+  { id: 101, name: "Tintura Chaqueta", description: "Tintura Chaqueta", price: 28000, active: true },
+  { id: 102, name: "Tintura Pantalón", description: "Tintura Pantalón", price: 28000, active: true },
+  { id: 103, name: "Edredón Cama Doble", description: "Edredón Cama Doble", price: 32000, active: true },
+  { id: 104, name: "Tintura Pantalón", description: "Tintura Pantalón", price: 28000, active: true },
 ];
 const initialCouriers = [
   { id: 1, name: "Carlos Méndez", phone: "+57 318 900 2211", active: true },
@@ -76,7 +175,7 @@ export default function Home() {
     { key: "solicitud", label: "Solicitud pública", icon: Phone },
   ];
 
-  if (!authenticated && publicMode) return <PublicLanding tickets={tickets} setTickets={setTickets} clients={clients} setClients={setClients} onAdmin={() => setPublicMode(false)} />;
+  if (!authenticated && publicMode) return <PublicLanding tickets={tickets} setTickets={setTickets} clients={clients} setClients={setClients} services={services} onAdmin={() => setPublicMode(false)} />;
   if (!authenticated) return <Login password={password} setPassword={setPassword} onLogin={() => password === "admin123" ? setAuthenticated(true) : toast.error("Contraseña incorrecta. Usa admin123 para la demo.")} />;
 
   const activeLabel = navItems.find(item => item.key === module)?.label || "Dashboard";
@@ -130,10 +229,10 @@ function PublicRequest() { const [name, setName] = useState(""); const [phone, s
 function Invoice({ ticket }: { ticket: typeof initialTickets[0] }) { return <><div className="invoice-heading no-print"><div><p className="eyebrow">FACTURACIÓN / {ticket.ticket}</p><h2>Factura</h2><p className="muted">Vista previa del recibo térmico.</p></div><Button onClick={() => window.print()}><Printer size={17} /> Imprimir</Button></div><div className="invoice-layout"><div className="invoice-preview"><div className="thermal-receipt"><div className="receipt-brand">LAVANDERIA<br />INNOVATION</div><div className="receipt-subtitle">LAVANDERÍA Y TINTORERÍA<br />Zipaquirá, Colombia<br />Tel. +57 300 000 0000</div><div className="receipt-line">================================</div><div className="receipt-meta"><span>TICKET: {ticket.ticket}</span><span>{new Date().toLocaleDateString("es-CO")}</span><span>{new Date().toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" })}</span></div><div className="receipt-line">--------------------------------</div><div className="receipt-section"><b>CLIENTE</b><span>{ticket.client}</span><span>Tel. +57 310 482 1930</span><span>Dirección registrada</span></div><div className="receipt-line">--------------------------------</div><div className="receipt-section"><b>SERVICIO</b><span>{ticket.service}</span><span>{ticket.clothes}</span><span>Estado: {ticket.status}</span></div><div className="receipt-line">--------------------------------</div><div className="receipt-total"><span>TOTAL</span><strong>{money(ticket.total)}</strong></div><div className="receipt-line">================================</div><div className="receipt-thanks">Gracias por confiar en<br />Lavanderia Innovation</div></div></div><div className="invoice-side no-print"><div className="panel invoice-info"><div className="panel-heading"><h3>Resumen del ticket</h3><span className={`status-badge ${statusStyles[ticket.status]}`}><i />{ticket.status}</span></div><div className="info-row"><span>Cliente</span><b>{ticket.client}</b></div><div className="info-row"><span>Recogida</span><b>{ticket.pickup}</b></div><div className="info-row"><span>Entrega</span><b>{ticket.delivery}</b></div><div className="info-row"><span>Domiciliario</span><b>{ticket.courier}</b></div><div className="info-row total-row"><span>Total</span><b>{money(ticket.total)}</b></div></div><Button className="print-full" onClick={() => window.print()}><Printer size={17} /> Imprimir factura</Button></div></div></>; }
 
 
-function PublicLanding({ tickets, setTickets, clients, setClients, onAdmin }: { tickets: typeof initialTickets; setTickets: React.Dispatch<React.SetStateAction<typeof initialTickets>>; clients: typeof initialClients; setClients: React.Dispatch<React.SetStateAction<typeof initialClients>>; onAdmin: () => void }) {
-  const [form, setForm] = useState({ name: "", phone: "", email: "", address: "", service: "Lavado + Secado", day: "Lunes", clothes: "", pickup: "9:30 a. m. - 12:30 p. m.", delivery: "2:30 p. m. - 5:00 p. m.", notes: "" });
+function PublicLanding({ tickets, setTickets, clients, setClients, services, onAdmin }: { tickets: typeof initialTickets; setTickets: React.Dispatch<React.SetStateAction<typeof initialTickets>>; clients: typeof initialClients; setClients: React.Dispatch<React.SetStateAction<typeof initialClients>>; services: typeof initialServices; onAdmin: () => void }) {
+  const activeServices = services.filter(service => service.active);
+  const [form, setForm] = useState(() => ({ name: "", phone: "", email: "", address: "", service: activeServices[0]?.name || "", day: "Lunes", clothes: "", pickup: "9:30 a. m. - 12:30 p. m.", delivery: "2:30 p. m. - 5:00 p. m.", notes: "" }));
   const [sent, setSent] = useState(false);
-  const activeServices = initialServices.filter(service => service.active);
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
     if (!form.name || !form.phone || !form.address || !form.service || !form.clothes) return toast.error("Completa nombre, teléfono, dirección, servicio y prendas");
@@ -150,8 +249,8 @@ function PublicLanding({ tickets, setTickets, clients, setClients, onAdmin }: { 
     <main>
       <section className="public-hero" id="inicio"><div className="public-hero-copy"><span className="promo-kicker">LAVANDERÍA Y TINTORERÍA · ZIPAQUIRÁ</span><h1>Tu ropa limpia, <em>sin salir de casa.</em></h1><p>Programa tu domicilio con anticipación. Recogemos, lavamos, secamos y entregamos tus prendas listas.</p><div className="hero-actions"><a className="hero-primary" href="#pedido"><Package size={18} /> Solicitar mi domicilio</a><a className="hero-secondary" href="https://wa.me/573226111910" target="_blank" rel="noreferrer"><Phone size={17} /> 322 611 1910</a></div><div className="hero-trust"><span><Check size={15} /> Domicilio gratis</span><span><Check size={15} /> Confirmación por WhatsApp</span></div></div><div className="hero-art"><img src="/manus-storage/promo-domicilio_4af2fb1f.jpeg" alt="Servicio de domicilio de Lavanderia Innovation" /></div></section>
       <section className="promo-strip"><img src="/manus-storage/promo-cansada_5f1e4aeb.jpeg" alt="Cansada de lavar en casa" /><div><span className="promo-kicker">TU SOLUCIÓN PARA LAVAR EN CASA</span><h2>Lavado, seco y doblado.</h2><p>Déjanos el trabajo pesado. Escríbenos y coordinamos la recogida de tus prendas.</p><a className="hero-primary" href="#pedido">Preguntar ahora <Phone size={16} /></a></div></section>
-      <section className="public-services" id="servicios"><div className="section-heading"><span className="promo-kicker">SERVICIOS PARA TU DÍA A DÍA</span><h2>Todo listo para volver a usar.</h2><p>Elige el servicio que necesitas y cuéntanos qué prendas vamos a recoger.</p></div><div className="public-service-grid">{activeServices.map(service => <article className="public-service-card" key={service.id}><div className="public-service-icon"><Shirt size={20} /></div><h3>{service.name}</h3><p>{service.description}</p><strong>Desde {money(service.price)}</strong></article>)}</div></section>
-      <section className="order-section" id="pedido"><div className="section-heading"><span className="promo-kicker">SOLICITA TU DOMICILIO</span><h2>Lo recogemos donde estés.</h2><p>Al enviar el formulario se crea el domicilio en nuestro sistema y se abre WhatsApp para confirmar los detalles. Atendemos lunes a viernes de 9:30 a. m. a 12:30 p. m. y de 2:30 p. m. a 5:00 p. m.; sábados de 9:30 a. m. a 12:00 p. m. Los domingos no hay servicio.</p></div><form className="public-order-card" onSubmit={submit}><div className="order-card-heading"><div><h3>Programa tu recogida</h3><p>Te contactaremos para confirmar disponibilidad y horario.</p></div><div className="order-number">01</div></div><div className="order-form-grid"><label>Nombre completo<Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Ej. Laura Gómez" /></label><label>Teléfono<Input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="+57 300 000 0000" /></label><label>Correo electrónico<Input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="cliente@email.com" /></label><label>Servicio<select value={form.service} onChange={e => setForm({ ...form, service: e.target.value })}>{activeServices.map(service => <option key={service.id}>{service.name}</option>)}</select></label><label className="field-full">Dirección de recogida<Input value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} placeholder="Dirección, barrio y referencias" /></label><label>Día de recogida<select value={form.day} onChange={e => setForm({ ...form, day: e.target.value })}><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option><option>Sábado</option></select></label><label>Franja de recogida<select value={form.pickup} onChange={e => setForm({ ...form, pickup: e.target.value })}>{form.day === "Sábado" ? <option>9:30 a. m. - 12:00 p. m.</option> : <><option>9:30 a. m. - 12:30 p. m.</option><option>2:30 p. m. - 5:00 p. m.</option></>}</select></label><label>Franja de entrega<select value={form.delivery} onChange={e => setForm({ ...form, delivery: e.target.value })}>{form.day === "Sábado" ? <option>9:30 a. m. - 12:00 p. m.</option> : <><option>2:30 p. m. - 5:00 p. m.</option><option>9:30 a. m. - 12:30 p. m.</option></>}</select></label><label className="field-full">¿Qué prendas vamos a recoger?<Input value={form.clothes} onChange={e => setForm({ ...form, clothes: e.target.value })} placeholder="Ej. 2 bolsas de ropa, 1 edredón" /></label><label className="field-full">Notas adicionales<Input value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} placeholder="Indicaciones para nuestro equipo" /></label></div><div className="order-submit-row"><span><ShieldCheck size={16} /> Tus datos se usan solo para coordinar el domicilio.</span><Button type="submit"><Phone size={17} /> Crear domicilio y confirmar por WhatsApp</Button></div>{sent && <div className="order-success"><Check size={17} /> Solicitud creada. Revisa WhatsApp para confirmar tu pedido.</div>}</form></section>
+      <section className="public-services" id="servicios"><div className="section-heading"><span className="promo-kicker">SERVICIOS PARA TU DÍA A DÍA</span><h2>Todo listo para volver a usar.</h2><p>Elige el servicio que necesitas y cuéntanos qué prendas vamos a recoger.</p></div><div className="public-service-grid">{activeServices.length ? activeServices.map(service => <article className="public-service-card" key={service.id}><div className="public-service-icon"><Shirt size={20} /></div><h3>{service.name}</h3><p>{service.description}</p><strong>Desde {money(service.price)}</strong></article>) : <div className="empty-state"><p>En este momento no hay servicios activos para solicitar en línea.</p></div>}</div></section>
+      <section className="order-section" id="pedido"><div className="section-heading"><span className="promo-kicker">SOLICITA TU DOMICILIO</span><h2>Lo recogemos donde estés.</h2><p>Al enviar el formulario se crea el domicilio en nuestro sistema y se abre WhatsApp para confirmar los detalles. Atendemos lunes a viernes de 9:30 a. m. a 12:30 p. m. y de 2:30 p. m. a 5:00 p. m.; sábados de 9:30 a. m. a 12:00 p. m. Los domingos no hay servicio.</p></div><form className="public-order-card" onSubmit={submit}><div className="order-card-heading"><div><h3>Programa tu recogida</h3><p>Te contactaremos para confirmar disponibilidad y horario.</p></div><div className="order-number">01</div></div><div className="order-form-grid"><label>Nombre completo<Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Ej. Laura Gómez" /></label><label>Teléfono<Input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="+57 300 000 0000" /></label><label>Correo electrónico<Input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="cliente@email.com" /></label><label>Servicio<select value={form.service} disabled={!activeServices.length} onChange={e => setForm({ ...form, service: e.target.value })}>{activeServices.length ? activeServices.map(service => <option key={service.id}>{service.name}</option>) : <option value="">No hay servicios disponibles</option>}</select></label><label className="field-full">Dirección de recogida<Input value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} placeholder="Dirección, barrio y referencias" /></label><label>Día de recogida<select value={form.day} onChange={e => setForm({ ...form, day: e.target.value })}><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option><option>Sábado</option></select></label><label>Franja de recogida<select value={form.pickup} onChange={e => setForm({ ...form, pickup: e.target.value })}>{form.day === "Sábado" ? <option>9:30 a. m. - 12:00 p. m.</option> : <><option>9:30 a. m. - 12:30 p. m.</option><option>2:30 p. m. - 5:00 p. m.</option></>}</select></label><label>Franja de entrega<select value={form.delivery} onChange={e => setForm({ ...form, delivery: e.target.value })}>{form.day === "Sábado" ? <option>9:30 a. m. - 12:00 p. m.</option> : <><option>2:30 p. m. - 5:00 p. m.</option><option>9:30 a. m. - 12:30 p. m.</option></>}</select></label><label className="field-full">¿Qué prendas vamos a recoger?<Input value={form.clothes} onChange={e => setForm({ ...form, clothes: e.target.value })} placeholder="Ej. 2 bolsas de ropa, 1 edredón" /></label><label className="field-full">Notas adicionales<Input value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} placeholder="Indicaciones para nuestro equipo" /></label></div><div className="order-submit-row"><span><ShieldCheck size={16} /> Tus datos se usan solo para coordinar el domicilio.</span><Button type="submit"><Phone size={17} /> Crear domicilio y confirmar por WhatsApp</Button></div>{sent && <div className="order-success"><Check size={17} /> Solicitud creada. Revisa WhatsApp para confirmar tu pedido.</div>}</form></section>
     </main>
     <footer className="public-footer" id="contacto"><div><b>Lavanderia Innovation</b><span>Lavandería y tintorería a domicilio en Zipaquirá.</span></div><a href="https://wa.me/573226111910" target="_blank" rel="noreferrer"><Phone size={15} /> 322 611 1910</a><button onClick={onAdmin}>Acceso administrativo</button></footer>
   </div>;
