@@ -4,7 +4,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { sdk } from "./_core/sdk";
 import { publicProcedure, router } from "./_core/trpc";
-import { createPublicTicket, listTickets, upsertUser } from "./db";
+import { createLocalUser, createPublicTicket, deleteLocalUser, listLocalUsers, listTickets, updateLocalUser, upsertUser, verifyLocalUserCredentials } from "./db";
 import { COOKIE_NAME, ONE_YEAR_MS } from "../shared/const";
 
 const publicTicketInput = z.object({
@@ -25,11 +25,12 @@ export const appRouter = router({
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
-    localLogin: publicProcedure.input(z.object({ username: z.string(), password: z.string() })).mutation(async ({ input, ctx }) => {
-      if (input.username !== "admin" || input.password !== "admin123") throw new TRPCError({ code: "UNAUTHORIZED", message: "Credenciales demo incorrectas" });
-      const openId = "local-demo-admin";
-      await upsertUser({ openId, name: "Administrador", email: "admin@lavanderia.local", loginMethod: "local", role: "admin" });
-      const token = await sdk.createSessionToken(openId, { name: "Administrador", expiresInMs: ONE_YEAR_MS });
+    localLogin: publicProcedure.input(z.object({ username: z.string().trim().min(1), password: z.string().min(1) })).mutation(async ({ input, ctx }) => {
+      const localUser = await verifyLocalUserCredentials(input.username, input.password);
+      if (!localUser) throw new TRPCError({ code: "UNAUTHORIZED", message: "Usuario o contraseña incorrectos" });
+      const openId = `local-user-${localUser.id}`;
+      await upsertUser({ openId, name: localUser.username, email: `${localUser.username}@lavanderia.local`, loginMethod: "local", role: localUser.role === "Administrador" ? "admin" : "user" });
+      const token = await sdk.createSessionToken(openId, { name: localUser.username, expiresInMs: ONE_YEAR_MS });
       ctx.res.cookie(COOKIE_NAME, token, { ...getSessionCookieOptions(ctx.req), maxAge: ONE_YEAR_MS });
       return { success: true } as const;
     }),
@@ -38,6 +39,12 @@ export const appRouter = router({
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return { success: true } as const;
     }),
+  }),
+  users: router({
+    list: publicProcedure.query(() => listLocalUsers()),
+    create: publicProcedure.input(z.object({ username: z.string().trim().min(1), password: z.string().min(6), role: z.enum(["Administrador", "Empleado"]) })).mutation(({ input }) => createLocalUser(input)),
+    update: publicProcedure.input(z.object({ id: z.number().int().positive(), username: z.string().trim().min(1), password: z.string().min(6).optional(), role: z.enum(["Administrador", "Empleado"]) })).mutation(({ input }) => updateLocalUser(input)),
+    delete: publicProcedure.input(z.object({ id: z.number().int().positive() })).mutation(({ input }) => deleteLocalUser(input.id)),
   }),
   tickets: router({
     list: publicProcedure.query(() => listTickets()),

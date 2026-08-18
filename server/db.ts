@@ -7,8 +7,10 @@ import {
   services,
   tickets,
   users,
+  localUsers,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
+import { hashLocalPassword, verifyLocalPassword } from "./localAuth";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -23,6 +25,48 @@ export async function getDb() {
     }
   }
   return _db;
+}
+
+export async function listLocalUsers() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select({ id: localUsers.id, username: localUsers.username, role: localUsers.role, createdAt: localUsers.createdAt }).from(localUsers);
+}
+
+export async function getLocalUserByUsername(username: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(localUsers).where(eq(localUsers.username, username)).limit(1);
+  return result[0];
+}
+
+export async function createLocalUser(input: { username: string; password: string; role: "Administrador" | "Empleado" }) {
+  const db = await getDb();
+  if (!db) throw new Error("La base de datos no está disponible");
+  const inserted = await db.insert(localUsers).values({ username: input.username, passwordHash: hashLocalPassword(input.password), role: input.role });
+  const result = await db.select({ id: localUsers.id, username: localUsers.username, role: localUsers.role, createdAt: localUsers.createdAt }).from(localUsers).where(eq(localUsers.id, Number(inserted[0].insertId))).limit(1);
+  return result[0];
+}
+
+export async function updateLocalUser(input: { id: number; username: string; password?: string; role: "Administrador" | "Empleado" }) {
+  const db = await getDb();
+  if (!db) throw new Error("La base de datos no está disponible");
+  await db.update(localUsers).set({ username: input.username, ...(input.password ? { passwordHash: hashLocalPassword(input.password) } : {}), role: input.role }).where(eq(localUsers.id, input.id));
+  const result = await db.select({ id: localUsers.id, username: localUsers.username, role: localUsers.role, createdAt: localUsers.createdAt }).from(localUsers).where(eq(localUsers.id, input.id)).limit(1);
+  return result[0];
+}
+
+export async function deleteLocalUser(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("La base de datos no está disponible");
+  await db.delete(localUsers).where(eq(localUsers.id, id));
+  return { success: true } as const;
+}
+
+export async function verifyLocalUserCredentials(username: string, password: string) {
+  const user = await getLocalUserByUsername(username);
+  if (!user || !verifyLocalPassword(password, user.passwordHash)) return undefined;
+  return user;
 }
 
 export async function upsertUser(user: InsertUser): Promise<void> {

@@ -175,3 +175,14 @@
 ### Verificaciones adicionales de Configuración
 - [x] Añadir una prueba automatizada funcional que valide navegación y renderizado de Configuración
 - [x] Verificar Configuración en viewport móvil y registrar la adaptación de campos y Guardar cambios
+
+## Incidencia: usuarios administradores creados no pueden iniciar sesión
+- [x] Permitir escribir el nombre de usuario en el login
+- [x] Autenticar contra usuarios administradores creados desde el módulo Usuarios
+- [x] Permitir eliminar o editar usuarios sin depender del admin quemado
+- [x] Añadir pruebas y verificar el flujo completo de creación y acceso
+
+### Brechas pendientes de validación de usuarios
+- [x] Verificar en navegador la edición de un usuario creado desde el panel y confirmar el login con credenciales actualizadas
+- [x] Añadir una prueba automatizada de autenticación contra local_users con un usuario creado por Usuarios
+- [x] Añadir una prueba automatizada de CRUD persistente de Usuarios, incluyendo edición y eliminación
