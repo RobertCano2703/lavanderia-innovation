@@ -122,3 +122,14 @@
 - [x] Ocultar el listado de servicios de la página inicial
 - [x] Mantener la opción Servicios visible y funcional desde la navegación
 - [x] Verificar que la portada conserve el banner, el pedido y el acceso administrativo
+
+## Cierre de sesión
+
+- [x] Enviar al usuario a la página pública principal después de cerrar sesión
+- [x] Evitar que el cierre de sesión muestre la pantalla de login como destino inmediato
+- [x] Verificar el flujo de cierre de sesión y la navegación pública
+
+## Verificación real de cierre de sesión
+
+- [x] Probar en el navegador el cierre de sesión desde el panel administrativo
+- [x] Confirmar que después del cierre aparecen la landing pública, el banner y la navegación pública
