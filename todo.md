@@ -51,3 +51,13 @@
 - [x] Corregir transparencia de modales y formularios de creación
 - [x] Asegurar fondo opaco, campos legibles y contraste adecuado en diálogos
 - [x] Verificar la corrección en escritorio y móvil
+
+## Experiencia pública y pedidos
+
+- [x] Crear landing pública con banner promocional de Lavanderia Innovation
+- [x] Incorporar las imágenes promocionales proporcionadas por el usuario
+- [x] Añadir formulario público de pedido con datos del cliente, dirección, servicio y horario
+- [x] Crear el domicilio en la lista administrativa al enviar el pedido
+- [x] Generar enlace de WhatsApp con el resumen del pedido para confirmación
+- [x] Separar claramente el acceso público del acceso administrativo
+- [x] Verificar el flujo público en escritorio y móvil
