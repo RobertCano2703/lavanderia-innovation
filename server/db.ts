@@ -77,6 +77,15 @@ export type PublicTicketInput = {
   delivery: string;
   clothes: string;
   notes?: string;
+  servicePrice?: number;
+};
+
+const fallbackServicePrices: Record<string, number> = {
+  Camisa: 8000,
+  Camiseta: 8000,
+  Pantalón: 9000,
+  Jeans: 9000,
+  "Chaqueta De Plumas": 16000,
 };
 
 function splitTimeRange(value: string) {
@@ -108,10 +117,14 @@ export async function createPublicTicket(input: PublicTicketInput) {
 
   const existingService = await db.select().from(services).where(eq(services.name, input.service)).limit(1);
   let service = existingService[0];
+  const requestedPrice = input.servicePrice ?? fallbackServicePrices[input.service] ?? 0;
   if (!service) {
-    const inserted = await db.insert(services).values({ name: input.service, description: input.service, price: "0", isActive: true });
+    const inserted = await db.insert(services).values({ name: input.service, description: input.service, price: String(requestedPrice), isActive: true });
     const created = await db.select().from(services).where(eq(services.id, Number(inserted[0].insertId))).limit(1);
     service = created[0];
+  } else if (Number(service.price) === 0 && requestedPrice > 0) {
+    await db.update(services).set({ price: String(requestedPrice) }).where(eq(services.id, service.id));
+    service = { ...service, price: String(requestedPrice) };
   }
   if (!service) throw new Error("No fue posible resolver el servicio solicitado");
 
@@ -156,7 +169,7 @@ export async function listTickets() {
     service: service.name,
     courier: courier?.name || "Sin asignar",
     status: ticket.status,
-    total: Number(ticket.totalAmount),
+    total: Number(ticket.totalAmount) || Number(service.price) || fallbackServicePrices[service.name] || 0,
     pickup: [ticket.pickupTimeStart, ticket.pickupTimeEnd].filter(Boolean).join(" - "),
     delivery: [ticket.deliveryTimeStart, ticket.deliveryTimeEnd].filter(Boolean).join(" - "),
     clothes: ticket.clothingDescription || "",

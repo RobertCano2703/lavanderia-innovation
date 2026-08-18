@@ -167,8 +167,11 @@ function money(value: number) { return `$${value.toLocaleString("es-CO")}`; }
 function initials(name: string) { return name.split(" ").map(p => p[0]).slice(0, 2).join(""); }
 
 export default function Home() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [publicMode, setPublicMode] = useState(true);
+  const authMe = trpc.auth.me.useQuery(undefined, { retry: false, refetchOnWindowFocus: false });
+  const localLogin = trpc.auth.localLogin.useMutation();
+  const serverLogout = trpc.auth.logout.useMutation();
+  const [authenticated, setAuthenticated] = useState(() => window.localStorage.getItem("lavanderia_admin_session") === "active");
+  const [publicMode, setPublicMode] = useState(() => window.localStorage.getItem("lavanderia_admin_session") !== "active");
   const [password, setPassword] = useState("");
   const [module, setModule] = useState<Module>("dashboard");
   const [tickets, setTickets] = useState(initialTickets);
@@ -187,6 +190,18 @@ export default function Home() {
   }, [ticketsQuery.data]);
 
   const counts = useMemo(() => tickets.reduce((acc, t) => ({ ...acc, [t.status]: (acc[t.status] || 0) + 1 }), {} as Record<string, number>), [tickets]);
+  useEffect(() => {
+    if (authMe.data) {
+      window.localStorage.setItem("lavanderia_admin_session", "active");
+      setAuthenticated(true);
+      setPublicMode(false);
+    } else if (!authMe.isLoading && window.localStorage.getItem("lavanderia_admin_session") === "active") {
+      window.localStorage.removeItem("lavanderia_admin_session");
+      setAuthenticated(false);
+      setPublicMode(true);
+    }
+  }, [authMe.data, authMe.isLoading]);
+
   const navItems: { key: Module; label: string; icon: typeof LayoutDashboard }[] = [
     { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { key: "clientes", label: "Clientes", icon: Users },
@@ -198,7 +213,7 @@ export default function Home() {
   ];
 
   if (!authenticated && publicMode) return <PublicLanding tickets={tickets} setTickets={setTickets} clients={clients} setClients={setClients} services={services} onAdmin={() => setPublicMode(false)} createPublicTicket={createPublicTicket} />;
-  if (!authenticated) return <Login password={password} setPassword={setPassword} onLogin={() => password === "admin123" ? setAuthenticated(true) : toast.error("Contraseña incorrecta. Usa admin123 para la demo.")} />;
+  if (!authenticated) return <Login password={password} setPassword={setPassword} onLogin={() => localLogin.mutate({ username: "admin", password }, { onSuccess: async () => { window.localStorage.setItem("lavanderia_admin_session", "active"); await authMe.refetch(); setAuthenticated(true); setPublicMode(false); }, onError: () => toast.error("Contraseña incorrecta. Usa admin123 para la demo.") })} />;
 
   const activeLabel = navItems.find(item => item.key === module)?.label || "Dashboard";
   const filteredClients = clients.filter(c => `${c.name} ${c.phone}`.toLowerCase().includes(query.toLowerCase()));
@@ -214,7 +229,7 @@ export default function Home() {
       <div className="brand"><div className="brand-mark"><Shirt size={22} /></div><div><strong>Lavanderia</strong><span>Innovation</span></div></div>
       <div className="workspace-label">OPERACIÓN</div>
       <nav className="nav-list">{navItems.map(({ key, label, icon: Icon }) => <button key={key} onClick={() => chooseModule(key)} className={`nav-item ${module === key ? "active" : ""}`}><Icon size={18} /><span>{label}</span>{key === "tickets" && <em>{tickets.length}</em>}</button>)}</nav>
-      <div className="sidebar-bottom"><div className="support-card"><Zap size={16} /><div><b>Todo bajo control</b><small>Operación al día</small></div></div><button className="nav-item"><Settings size={18} /><span>Configuración</span></button><button className="profile-mini" onClick={() => { setAuthenticated(false); setPublicMode(true); setPassword(""); }}><div className="avatar">AD</div><div><b>Administrador</b><small>Cerrar sesión</small></div><LogOut size={16} /></button></div>
+      <div className="sidebar-bottom"><div className="support-card"><Zap size={16} /><div><b>Todo bajo control</b><small>Operación al día</small></div></div><button className="nav-item"><Settings size={18} /><span>Configuración</span></button><button className="profile-mini" onClick={() => { serverLogout.mutate(); window.localStorage.removeItem("lavanderia_admin_session"); setAuthenticated(false); setPublicMode(true); setPassword(""); }}><div className="avatar">AD</div><div><b>Administrador</b><small>Cerrar sesión</small></div><LogOut size={16} /></button></div>
     </aside>
     <main className="main-area">
       <header className="topbar"><button className="mobile-menu" onClick={() => setMobileOpen(!mobileOpen)}><Menu size={20} /></button><div><p className="eyebrow">OPERACIÓN / {activeLabel.toUpperCase()}</p><h1>{activeLabel}</h1></div><div className="top-actions"><div className="search-global"><Search size={17} /><input placeholder="Buscar..." value={query} onChange={e => setQuery(e.target.value)} /></div><button className="icon-button"><Bell size={18} /><i /></button><div className="top-profile"><div className="avatar small">AD</div><span>Administrador</span><ChevronDown size={15} /></div></div></header>
@@ -264,7 +279,7 @@ function PublicLanding({ tickets, setTickets, clients, setClients, services, onA
     const service = activeServices.find(item => item.name === form.service) || activeServices[0];
     const ticket = { id: Date.now(), ticket: `TK-${String(Date.now()).slice(-5)}`, client: form.name, service: form.service, courier: "Sin asignar", status: "Pendiente" as Status, total: service?.price || 0, pickup: form.pickup, delivery: form.delivery, clothes: form.clothes, notes: form.notes || "Solicitud recibida desde la web" };
     const message = `Hola, Lavanderia Innovation. Quiero confirmar mi pedido ${ticket.ticket}. Cliente: ${form.name}. Teléfono: ${form.phone}. Dirección: ${form.address}. Servicio: ${form.service}. Prendas: ${form.clothes}. Día: ${form.day}. Recogida: ${form.pickup}. Entrega: ${form.delivery}. Total estimado: ${money(ticket.total)}. ${form.notes}`;
-    createPublicTicket.mutate({ ...form }, {
+    createPublicTicket.mutate({ ...form, servicePrice: service?.price || 0 }, {
       onSuccess: result => {
         const persistedTicket = { ...ticket, id: result.id, ticket: result.ticketNumber, total: result.total };
         setTickets(prev => [persistedTicket, ...prev.filter(item => item.ticket !== persistedTicket.ticket)]);
@@ -277,13 +292,13 @@ function PublicLanding({ tickets, setTickets, clients, setClients, services, onA
     return;
   };
   return <div className="public-site">
-    <header className="public-nav"><a className="public-brand" href="#inicio"><img src="/manus-storage/banner-logo_e91b6326.jpeg" alt="Lavanderia Innovation" /><span>Lavanderia Innovation</span></a><nav><a href="#servicios" onClick={() => setShowServices(true)}>Servicios</a><a href="#pedido">Solicitar domicilio</a><a href="#contacto">Contacto</a></nav><button className="admin-access" onClick={onAdmin}><ShieldCheck size={16} /> Acceso administrativo</button></header>
+    <header className="public-nav"><a className="public-brand" href="#inicio"><img src="/manus-storage/banner-logo_e91b6326.jpeg" alt="Lavanderia Innovation" /><span>Lavanderia Innovation</span></a><nav><a href="#servicios" onClick={() => setShowServices(true)}>Servicios</a><a href="#pedido">Solicitar domicilio</a><a href="#contacto">Contacto</a></nav><button className="admin-access" onClick={onAdmin}><ShieldCheck size={16} /> Acceder</button></header>
     <main>
       <section className="public-hero" id="inicio"><div className="public-hero-copy"><span className="promo-kicker">LAVANDERÍA Y TINTORERÍA · ZIPAQUIRÁ</span><h1>Tu ropa limpia, <em>sin salir de casa.</em></h1><p>Programa tu domicilio con anticipación. Recogemos, lavamos, secamos y entregamos tus prendas listas.</p><div className="hero-actions"><a className="hero-primary" href="#pedido"><Package size={18} /> Solicitar mi domicilio</a><a className="hero-secondary" href="https://wa.me/573226111910" target="_blank" rel="noreferrer"><Phone size={17} /> 322 611 1910</a></div><div className="hero-trust"><span><Check size={15} /> Domicilio gratis</span><span><Check size={15} /> Confirmación por WhatsApp</span></div></div><div className="hero-art"><img src="/manus-storage/promo-domicilio_4af2fb1f.jpeg" alt="Servicio de domicilio de Lavanderia Innovation" /></div></section>
       <section className="promo-strip"><img src="/manus-storage/promo-cansada_5f1e4aeb.jpeg" alt="Cansada de lavar en casa" /><div><span className="promo-kicker">TU SOLUCIÓN PARA LAVAR EN CASA</span><h2>Lavado, seco y doblado.</h2><p>Déjanos el trabajo pesado. Escríbenos y coordinamos la recogida de tus prendas.</p><a className="hero-primary" href="#pedido">Preguntar ahora <Phone size={16} /></a></div></section>
       {showServices && <section className="public-services" id="servicios"><div className="section-heading"><span className="promo-kicker">SERVICIOS PARA TU DÍA A DÍA</span><h2>Todo listo para volver a usar.</h2><p>Elige el servicio que necesitas y cuéntanos qué prendas vamos a recoger.</p></div><div className="segment-tabs public-segment-tabs">{["Todos", ...serviceCategories].map(item => <button type="button" key={item} className={selectedCategory === item ? "active" : ""} onClick={() => setSelectedCategory(item as ServiceCategory | "Todos")}>{item}</button>)}</div><div className="public-service-grid">{visibleServices.length ? visibleServices.map(service => <article className="public-service-card" key={service.id}><div className="public-service-icon"><Shirt size={20} /></div><h3>{service.name}</h3><p>{service.description}</p><strong>Desde {money(service.price)}</strong></article>) : <div className="empty-state"><p>En este momento no hay servicios activos para solicitar en línea.</p></div>}</div></section>}
       <section className="order-section" id="pedido"><div className="section-heading"><span className="promo-kicker">SOLICITA TU DOMICILIO</span><h2>Lo recogemos donde estés.</h2><p>Al enviar el formulario se crea el domicilio en nuestro sistema y se abre WhatsApp para confirmar los detalles. Atendemos lunes a viernes de 9:30 a. m. a 12:30 p. m. y de 2:30 p. m. a 5:00 p. m.; sábados de 9:30 a. m. a 12:00 p. m. Los domingos no hay servicio.</p></div><form className="public-order-card" onSubmit={submit}><div className="order-card-heading"><div><h3>Programa tu recogida</h3><p>Te contactaremos para confirmar disponibilidad y horario.</p></div><div className="order-number">01</div></div><div className="order-form-grid"><label>Nombre completo<Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Ej. Laura Gómez" /></label><label>Teléfono<Input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="+57 300 000 0000" /></label><label>Correo electrónico<Input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="cliente@email.com" /></label><label>Servicio<select value={form.service} disabled={!activeServices.length} onChange={e => setForm({ ...form, service: e.target.value })}>{activeServices.length ? activeServices.map(service => <option key={service.id}>{service.name}</option>) : <option value="">No hay servicios disponibles</option>}</select></label><label className="field-full">Dirección de recogida<Input value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} placeholder="Dirección, barrio y referencias" /></label><label>Día de recogida<select value={form.day} onChange={e => setForm({ ...form, day: e.target.value })}><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option><option>Sábado</option></select></label><label>Franja de recogida<select value={form.pickup} onChange={e => setForm({ ...form, pickup: e.target.value })}>{form.day === "Sábado" ? <option>9:30 a. m. - 12:00 p. m.</option> : <><option>9:30 a. m. - 12:30 p. m.</option><option>2:30 p. m. - 5:00 p. m.</option></>}</select></label><label>Franja de entrega<select value={form.delivery} onChange={e => setForm({ ...form, delivery: e.target.value })}>{form.day === "Sábado" ? <option>9:30 a. m. - 12:00 p. m.</option> : <><option>2:30 p. m. - 5:00 p. m.</option><option>9:30 a. m. - 12:30 p. m.</option></>}</select></label><label className="field-full">¿Qué prendas vamos a recoger?<Input value={form.clothes} onChange={e => setForm({ ...form, clothes: e.target.value })} placeholder="Ej. 2 bolsas de ropa, 1 edredón" /></label><label className="field-full">Notas adicionales<Input value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} placeholder="Indicaciones para nuestro equipo" /></label></div><div className="order-submit-row"><span><ShieldCheck size={16} /> Tus datos se usan solo para coordinar el domicilio.</span><Button type="submit"><Phone size={17} /> Crear domicilio y confirmar por WhatsApp</Button></div>{sent && <div className="order-success"><Check size={17} /> Solicitud creada. Revisa WhatsApp para confirmar tu pedido.</div>}</form></section>
     </main>
-    <footer className="public-footer" id="contacto"><div><b>Lavanderia Innovation</b><span>Lavandería y tintorería a domicilio en Zipaquirá.</span></div><a href="https://wa.me/573226111910" target="_blank" rel="noreferrer"><Phone size={15} /> 322 611 1910</a><button onClick={onAdmin}>Acceso administrativo</button></footer>
+    <footer className="public-footer" id="contacto"><div><b>Lavanderia Innovation</b><span>Lavandería y tintorería a domicilio en Zipaquirá.</span></div><a href="https://wa.me/573226111910" target="_blank" rel="noreferrer"><Phone size={15} /> 322 611 1910</a><button onClick={onAdmin}><ShieldCheck size={15} /> Acceder</button></footer>
   </div>;
 }

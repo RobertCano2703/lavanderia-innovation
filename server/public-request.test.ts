@@ -23,6 +23,7 @@ describe("public ticket persistence", () => {
       email: "",
       address: "Cra 2B #48r-87 sur",
       service: "Chaqueta De Plumas",
+      servicePrice: 16000,
       day: "Miércoles",
       pickup: "9:30 a. m. - 12:30 p. m.",
       delivery: "2:30 p. m. - 5:00 p. m.",
@@ -31,6 +32,7 @@ describe("public ticket persistence", () => {
     });
 
     expect(createPublicTicket).toHaveBeenCalledOnce();
+    expect(createPublicTicket).toHaveBeenCalledWith(expect.objectContaining({ service: "Chaqueta De Plumas", servicePrice: 16000 }));
     expect(result).toEqual({ id: 37100, ticketNumber: "TK-37100", total: 16000 });
   });
 

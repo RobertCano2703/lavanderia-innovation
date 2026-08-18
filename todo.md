@@ -146,3 +146,16 @@
 - [x] Garantizar persistencia y sincronización del pedido público en el panel administrativo
 - [x] Añadir pruebas de regresión para creación pública y visibilidad administrativa
 - [x] Verificar el flujo corregido en viewport móvil y escritorio
+
+## Correcciones reportadas: precios, acceso y sesión
+
+- [x] Corregir el precio persistido de los servicios en tickets públicos y recibos POS
+- [x] Restaurar el botón visible de iniciar sesión o ingresar en la portada pública
+- [x] Mantener la sesión administrativa al actualizar la página
+- [x] Añadir pruebas para precios de tickets y persistencia de sesión
+- [x] Verificar el flujo corregido en escritorio, móvil y recibo imprimible
+
+## Brechas detectadas antes de publicación final
+- [x] Restaurar la sesión mediante autenticación real de servidor/cookie y validar auth.me al recargar
+- [x] Añadir pruebas funcionales de restauración de sesión y precio persistido en ticket/recibo
+- [x] Verificar en viewport móvil posterior a los cambios y revisar explícitamente el recibo imprimible
