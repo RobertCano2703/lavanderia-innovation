@@ -25,4 +25,11 @@ describe("regresiones de acceso y precios en la UI", () => {
     expect(home).toContain("ticket.total");
     expect(home).toContain("window.print()");
   });
+
+  it("mantiene el login sin credenciales demo y con navegación de marca", () => {
+    expect(home).toContain('className="login-brand brand brand-light"');
+    expect(home).toContain('aria-label="Volver a la página principal"');
+    expect(home).not.toContain("Demo: admin / admin123");
+    expect(home).toContain('className="login-button"');
+  });
 });

@@ -159,3 +159,9 @@
 - [x] Restaurar la sesión mediante autenticación real de servidor/cookie y validar auth.me al recargar
 - [x] Añadir pruebas funcionales de restauración de sesión y precio persistido en ticket/recibo
 - [x] Verificar en viewport móvil posterior a los cambios y revisar explícitamente el recibo imprimible
+
+## Ajustes solicitados en la pantalla de login
+- [x] Quitar la leyenda visible de credenciales demo admin/admin123
+- [x] Hacer clicable el logotipo de Lavanderia Innovation para volver a la portada pública
+- [x] Centrar y reforzar visualmente el botón Acceder en la ventana de login
+- [x] Verificar navegación, responsive y compilación del login
