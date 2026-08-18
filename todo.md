@@ -61,3 +61,10 @@
 - [x] Generar enlace de WhatsApp con el resumen del pedido para confirmación
 - [x] Separar claramente el acceso público del acceso administrativo
 - [x] Verificar el flujo público en escritorio y móvil
+
+## Horarios de solicitud actualizados
+
+- [x] Configurar lunes a viernes con ruta mañana de 9:30 a. m. a 12:30 p. m. y ruta tarde de 2:30 p. m. a 5:00 p. m.
+- [x] Configurar sábados únicamente de 9:30 a. m. a 12:00 p. m.
+- [x] Bloquear domingos como día sin servicio en la solicitud pública
+- [x] Mostrar los horarios disponibles de forma clara al cliente
