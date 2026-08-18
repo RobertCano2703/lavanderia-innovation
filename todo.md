@@ -133,3 +133,9 @@
 
 - [x] Probar en el navegador el cierre de sesión desde el panel administrativo
 - [x] Confirmar que después del cierre aparecen la landing pública, el banner y la navegación pública
+
+## Ajuste del botón de login
+
+- [x] Cambiar “Ingresar al sistema” por “Acceder”
+- [x] Verificar que el acceso continúe funcionando después del cambio
+- [x] Probar en el navegador el botón “Acceder” y confirmar que abre el panel administrativo
