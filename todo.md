@@ -116,3 +116,9 @@
 
 - [x] Capturar el módulo administrativo de servicios con sus filtros y categorías visibles
 - [x] Registrar que los segmentos administrativos funcionan con tarjetas representativas
+
+## Ajuste de portada pública
+
+- [x] Ocultar el listado de servicios de la página inicial
+- [x] Mantener la opción Servicios visible y funcional desde la navegación
+- [x] Verificar que la portada conserve el banner, el pedido y el acceso administrativo
