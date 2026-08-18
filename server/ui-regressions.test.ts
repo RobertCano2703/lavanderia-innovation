@@ -32,4 +32,13 @@ describe("regresiones de acceso y precios en la UI", () => {
     expect(home).not.toContain("Demo: admin / admin123");
     expect(home).toContain('className="login-button"');
   });
+
+  it("expone Configuración como módulo navegable y editable", () => {
+    expect(home).toContain('onClick={() => chooseModule("configuracion")}');
+    expect(home).toContain('new URLSearchParams(window.location.search).get("module") === "configuracion"');
+    expect(home).toContain('module === "configuracion"');
+    expect(home).toContain("Información del negocio");
+    expect(home).toContain("Horarios de recogida");
+    expect(home).toContain("Configuración guardada en esta sesión");
+  });
 });

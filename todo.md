@@ -165,3 +165,13 @@
 - [x] Hacer clicable el logotipo de Lavanderia Innovation para volver a la portada pública
 - [x] Centrar y reforzar visualmente el botón Acceder en la ventana de login
 - [x] Verificar navegación, responsive y compilación del login
+
+## Configuración funcional del panel
+- [x] Conectar el botón Configuración con una sección real del panel
+- [x] Mostrar ajustes operativos, horarios y datos de contacto del negocio
+- [x] Añadir pruebas de navegación y contenido de Configuración
+- [x] Verificar la interacción en escritorio y móvil
+
+### Verificaciones adicionales de Configuración
+- [x] Añadir una prueba automatizada funcional que valide navegación y renderizado de Configuración
+- [x] Verificar Configuración en viewport móvil y registrar la adaptación de campos y Guardar cambios
