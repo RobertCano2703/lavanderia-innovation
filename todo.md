@@ -270,3 +270,8 @@
 
 ### Verificación final de Servicios móvil
 - [x] Ejecutar TypeScript y Vitest después de ampliar la prueba de apertura y cierre del catálogo; 32 pruebas aprobadas
+
+## Incidencia de producción: menú móvil de Servicios no visible
+- [x] Comparar el bundle y la navegación entre desarrollo y el dominio publicado
+- [x] Publicar una versión actualizada que incluya el menú móvil de Servicios
+- [x] Verificar el menú en el dominio público y en viewport móvil
