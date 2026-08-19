@@ -258,3 +258,15 @@
 - [x] Rechazar teléfonos con +57, espacios, guiones, letras o longitudes distintas
 - [x] Mantener deduplicación usando el teléfono normalizado de 10 dígitos
 - [x] Añadir pruebas y verificar formularios en escritorio y móvil
+
+## Incidencia móvil: acceso a Servicios
+- [x] Mostrar un acceso visible a Servicios en la portada móvil
+- [x] Permitir abrir y cerrar el catálogo de Servicios desde el control responsive
+- [x] Añadir prueba de navegación móvil y verificar que no se oculte el catálogo
+
+### Mejora pendiente detectada en navegación móvil de Servicios
+- [x] Añadir un control explícito para cerrar u ocultar el catálogo de Servicios desde móvil
+- [x] Ampliar pruebas y verificación manual para cubrir apertura y cierre del catálogo
+
+### Verificación final de Servicios móvil
+- [x] Ejecutar TypeScript y Vitest después de ampliar la prueba de apertura y cierre del catálogo; 32 pruebas aprobadas

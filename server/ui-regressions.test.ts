@@ -5,12 +5,24 @@ import { resolve } from "node:path";
 describe("regresiones de acceso y precios en la UI", () => {
   const home = readFileSync(resolve(process.cwd(), "client/src/pages/Home.tsx"), "utf8");
   const db = readFileSync(resolve(process.cwd(), "server/db.ts"), "utf8");
+  const css = readFileSync(resolve(process.cwd(), "client/src/index.css"), "utf8");
 
   it("envía el precio del servicio seleccionado y muestra Acceder en la portada", () => {
     expect(home).toContain("servicePrice: requestedPrice");
     expect(home).toContain("Valor del servicio: {money(selected.price)}");
     expect(home).toContain("<ShieldCheck size={16} /> Acceder");
     expect(home).toContain("<ShieldCheck size={15} /> Acceder");
+  });
+
+  it("mantiene Servicios visible en la navegación móvil de la portada", () => {
+    expect(home).toContain('<a href="#servicios" onClick={() => setShowServices(true)}>Servicios</a>');
+    expect(css).toContain('@media (max-width:800px)');
+    expect(css).toContain('.public-nav nav { display:flex; order:3; width:100%');
+    expect(css).toContain('overflow-x:auto');
+    expect(home).toContain('className="services-close"');
+    expect(home).toContain('setShowServices(false)');
+    expect(home).toContain('window.location.hash = "inicio"');
+    expect(css).toContain('.services-close');
   });
 
   it("muestra una vista previa térmica después de crear la solicitud pública", () => {
