@@ -138,7 +138,8 @@ function splitTimeRange(value: string) {
 }
 
 function normalizePhone(value: string) {
-  return value.replace(/[^0-9+]/g, "").replace(/^00/, "+");
+  const digits = value.replace(/\D/g, "");
+  return digits.length === 12 && digits.startsWith("57") ? digits.slice(2) : digits;
 }
 
 function normalizeEmail(value?: string | null) {
@@ -157,6 +158,9 @@ export async function createPublicTicket(input: PublicTicketInput) {
   const db = await getDb();
   if (!db) throw new Error("La base de datos no está disponible");
 
+  if (!/^\d{10}$/.test(input.phone)) {
+    throw new Error("El teléfono debe contener exactamente 10 dígitos numéricos, sin indicativo.");
+  }
   const phone = normalizePhone(input.phone);
   const email = normalizeEmail(input.email);
   const clientMatch = email

@@ -9,7 +9,7 @@ import { COOKIE_NAME, ONE_YEAR_MS } from "../shared/const";
 
 const publicTicketInput = z.object({
   name: z.string().trim().min(2),
-  phone: z.string().trim().min(7),
+  phone: z.string().regex(/^\d{10}$/, "El teléfono debe contener exactamente 10 dígitos numéricos, sin indicativo."),
   email: z.string().trim().email().optional().or(z.literal("")),
   address: z.string().trim().min(4),
   service: z.string().trim().min(1),

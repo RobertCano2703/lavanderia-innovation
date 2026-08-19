@@ -19,7 +19,7 @@ describe("public ticket persistence", () => {
 
     const result = await caller.tickets.createPublic({
       name: "Robert Cano",
-      phone: "+573172413300",
+      phone: "3172413300",
       email: "",
       address: "Cra 2B #48r-87 sur",
       service: "Chaqueta De Plumas",
@@ -36,12 +36,30 @@ describe("public ticket persistence", () => {
     expect(result).toEqual({ id: 37100, clientId: 44, ticketNumber: "TK-37100", total: 16000 });
   });
 
+  it("rejects international prefixes and non-local phone formats", async () => {
+    const caller = appRouter.createCaller({ user: null, req: {} as never, res: {} as never });
+    await expect(caller.tickets.createPublic({
+      name: "Cliente Inválido",
+      phone: "+573172413300",
+      email: "invalido@email.com",
+      address: "Carrera 1 # 2-3",
+      service: "Camisa",
+      servicePrice: 8000,
+      day: "Lunes",
+      pickup: "9:30 a. m. - 12:30 p. m.",
+      delivery: "2:30 p. m. - 5:00 p. m.",
+      clothes: "1 camisa",
+      notes: "",
+    })).rejects.toThrow(/exactamente 10 dígitos/);
+    expect(createPublicTicket).not.toHaveBeenCalled();
+  });
+
   it("returns persisted tickets to the administrative panel across browser sessions", async () => {
     const persisted = [{
       id: 37100,
       ticket: "TK-37100",
       client: "Robert Cano",
-      phone: "+573172413300",
+      phone: "3172413300",
       email: "",
       address: "Cra 2B #48r-87 sur",
       service: "Chaqueta De Plumas",

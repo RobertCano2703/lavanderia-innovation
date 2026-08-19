@@ -88,6 +88,12 @@ describe("regresiones de acceso y precios en la UI", () => {
     expect(home).toContain('deleteArchived.useMutation');
   });
 
+  it("exige teléfono local de 10 dígitos en todos los formularios de clientes", () => {
+    expect(home).toContain('type="tel" inputMode="numeric" maxLength={10}');
+    expect(home).toContain('sanitizeLocalPhone(e.target.value)');
+    expect(home).toContain('El teléfono debe tener exactamente 10 dígitos numéricos, sin indicativo.');
+  });
+
   it("protege clientes y valida teléfono y correo antes de crear duplicados", () => {
     expect(home).toContain('function normalizePhone');
     expect(home).toContain('function normalizeEmail');

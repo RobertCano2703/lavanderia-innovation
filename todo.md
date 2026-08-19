@@ -251,3 +251,10 @@
 - [x] Probar la eliminación definitiva desde Tickets archivados y confirmar que no existe en tickets activos
 - [x] Abrir el recibo de un ticket archivado y verificar marca de agua y estado en escritorio y móvil
 - [x] Verificar en viewport móvil el recibo de un ticket archivado abierto, confirmando visualmente la marca de agua ARCHIVADO/CANCELADO y el estado visible en la vista previa térmica.
+
+## Regla de teléfono local para clientes
+- [x] Aceptar únicamente exactamente 10 dígitos numéricos, sin indicativo, en creación y edición de clientes
+- [x] Aplicar la misma regla en solicitudes públicas y alta rápida de Domicilios
+- [x] Rechazar teléfonos con +57, espacios, guiones, letras o longitudes distintas
+- [x] Mantener deduplicación usando el teléfono normalizado de 10 dígitos
+- [x] Añadir pruebas y verificar formularios en escritorio y móvil
