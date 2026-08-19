@@ -4,7 +4,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { sdk } from "./_core/sdk";
 import { publicProcedure, router } from "./_core/trpc";
-import { createLocalUser, createPublicTicket, deleteLocalUser, listLocalUsers, listTickets, updateLocalUser, upsertUser, verifyLocalUserCredentials } from "./db";
+import { createLocalUser, createPublicTicket, deleteLocalUser, listClients, listLocalUsers, listTickets, updateLocalUser, upsertUser, verifyLocalUserCredentials } from "./db";
 import { COOKIE_NAME, ONE_YEAR_MS } from "../shared/const";
 
 const publicTicketInput = z.object({
@@ -45,6 +45,9 @@ export const appRouter = router({
     create: publicProcedure.input(z.object({ username: z.string().trim().min(1), password: z.string().min(6), role: z.enum(["Administrador", "Empleado"]) })).mutation(({ input }) => createLocalUser(input)),
     update: publicProcedure.input(z.object({ id: z.number().int().positive(), username: z.string().trim().min(1), password: z.string().min(6).optional(), role: z.enum(["Administrador", "Empleado"]) })).mutation(({ input }) => updateLocalUser(input)),
     delete: publicProcedure.input(z.object({ id: z.number().int().positive() })).mutation(({ input }) => deleteLocalUser(input.id)),
+  }),
+  clients: router({
+    list: publicProcedure.query(() => listClients()),
   }),
   tickets: router({
     list: publicProcedure.query(() => listTickets()),

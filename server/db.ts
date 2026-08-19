@@ -189,7 +189,14 @@ export async function createPublicTicket(input: PublicTicketInput) {
     notes: `${input.day}. ${input.notes || "Solicitud recibida desde la web"}`,
   });
 
-  return { id: Number(insertedTicket[0].insertId), ticketNumber, total: Number(service.price) };
+  return { id: Number(insertedTicket[0].insertId), clientId, ticketNumber, total: Number(service.price) };
+}
+
+export async function listClients() {
+  const db = await getDb();
+  if (!db) throw new Error("La base de datos no está disponible");
+  const rows = await db.select().from(clients).orderBy(desc(clients.createdAt));
+  return rows.map(client => ({ id: client.id, name: client.name, phone: client.phone, email: client.email || "—", address: client.address }));
 }
 
 export async function listTickets() {

@@ -6,9 +6,24 @@ describe("regresiones de acceso y precios en la UI", () => {
   const home = readFileSync(resolve(process.cwd(), "client/src/pages/Home.tsx"), "utf8");
 
   it("envía el precio del servicio seleccionado y muestra Acceder en la portada", () => {
-    expect(home).toContain("servicePrice: service?.price || 0");
+    expect(home).toContain("servicePrice: requestedPrice");
+    expect(home).toContain("Valor del servicio: {money(selected.price)}");
     expect(home).toContain("<ShieldCheck size={16} /> Acceder");
     expect(home).toContain("<ShieldCheck size={15} /> Acceder");
+  });
+
+  it("muestra una vista previa térmica después de crear la solicitud pública", () => {
+    expect(home).toContain("setPreviewTicket(persistedTicket)");
+    expect(home).toContain('className="receipt-dialog public-receipt-dialog"');
+    expect(home).toContain("Tel. {previewTicket.phone}");
+    expect(home).toContain("{money(previewTicket.total)}");
+    expect(home).toContain("Revisa la tira térmica y decide si deseas imprimirla.");
+  });
+
+  it("sincroniza clientes persistidos en el panel administrativo", () => {
+    expect(home).toContain("trpc.clients.list.useQuery");
+    expect(home).toContain("clientsQuery.data");
+    expect(home).toContain("id: result.clientId");
   });
 
   it("restaura la sesión mediante auth.me y la elimina solo al cerrar sesión", () => {
@@ -21,7 +36,8 @@ describe("regresiones de acceso y precios en la UI", () => {
   });
 
   it("mantiene el precio del ticket como fuente del recibo POS", () => {
-    expect(home).toContain("servicePrice: service?.price || 0");
+    expect(home).toContain("servicePrice: requestedPrice");
+    expect(home).toContain("Valor del servicio: {money(selected.price)}");
     expect(home).toContain("ticket.total");
     expect(home).toContain("window.print()");
     expect(home).toContain("receipt-dialog");

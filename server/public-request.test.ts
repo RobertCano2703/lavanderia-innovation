@@ -14,7 +14,7 @@ describe("public ticket persistence", () => {
   });
 
   it("accepts a mobile-compatible public request and returns its persisted ticket number", async () => {
-    createPublicTicket.mockResolvedValue({ id: 37100, ticketNumber: "TK-37100", total: 16000 });
+    createPublicTicket.mockResolvedValue({ id: 37100, clientId: 44, ticketNumber: "TK-37100", total: 16000 });
     const caller = appRouter.createCaller({ user: null, req: {} as never, res: {} as never });
 
     const result = await caller.tickets.createPublic({
@@ -33,7 +33,7 @@ describe("public ticket persistence", () => {
 
     expect(createPublicTicket).toHaveBeenCalledOnce();
     expect(createPublicTicket).toHaveBeenCalledWith(expect.objectContaining({ service: "Chaqueta De Plumas", servicePrice: 16000 }));
-    expect(result).toEqual({ id: 37100, ticketNumber: "TK-37100", total: 16000 });
+    expect(result).toEqual({ id: 37100, clientId: 44, ticketNumber: "TK-37100", total: 16000 });
   });
 
   it("returns persisted tickets to the administrative panel across browser sessions", async () => {

@@ -211,3 +211,14 @@
 - [x] Permitir seleccionar un domiciliario real en Nuevo/Editar domicilio y persistir la asignación
 - [x] Añadir pruebas para la opción desplegable de Crear cliente y la asignación de domiciliario
 - [x] Verificar el formulario corregido en escritorio y móvil
+
+## Incidencias reportadas: solicitud pública, cliente, precio e impresión
+- [x] Persistir en la base de datos el cliente ingresado desde la página principal
+- [x] Crear el ticket público con el precio real del servicio seleccionado
+- [x] Mostrar vista previa imprimible del ticket después de crear la solicitud
+- [x] Añadir pruebas de regresión para cliente, precio y vista previa pública
+- [x] Verificar el flujo público en escritorio y móvil
+
+### Verificación end-to-end pendiente del flujo público
+- [x] Probar en navegador el flujo público completo en escritorio: crear solicitud y confirmar vista previa con cliente, servicio y total
+- [x] Verificar en viewport móvil el flujo público completo, incluyendo envío y apertura de vista previa
