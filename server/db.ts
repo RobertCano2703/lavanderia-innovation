@@ -229,7 +229,22 @@ export async function archiveTicket(id: number) {
 export async function updateArchivedTicket(input: { id: number; status: "Pendiente" | "EnProceso" | "Enrutado" | "Entregado" | "Cancelado"; totalAmount: number; notes?: string }) {
   const db = await getDb();
   if (!db) throw new Error("La base de datos no está disponible");
-  await db.update(tickets).set({ status: input.status, totalAmount: String(input.totalAmount), notes: input.notes || null }).where(and(eq(tickets.id, input.id), isNotNull(tickets.archivedAt)));
+  const reactivated = input.status !== "Cancelado";
+  const result = await db.update(tickets).set({
+    status: input.status,
+    totalAmount: String(input.totalAmount),
+    notes: input.notes || null,
+    archivedAt: reactivated ? null : new Date(),
+  }).where(and(eq(tickets.id, input.id), isNotNull(tickets.archivedAt)));
+  if (!result[0] || Number(result[0].affectedRows ?? 0) === 0) throw new Error("El ticket archivado ya no está disponible");
+  return { success: true, reactivated } as const;
+}
+
+export async function deleteArchivedTicket(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("La base de datos no está disponible");
+  const result = await db.delete(tickets).where(and(eq(tickets.id, id), isNotNull(tickets.archivedAt)));
+  if (!result[0] || Number(result[0].affectedRows ?? 0) === 0) throw new Error("Solo se pueden eliminar tickets archivados");
   return { success: true } as const;
 }
 

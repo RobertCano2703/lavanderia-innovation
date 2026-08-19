@@ -238,3 +238,16 @@
 - [x] Mostrar marca de agua ARCHIVADO o CANCELADO en el recibo térmico de tickets archivados
 - [x] Añadir pruebas para edición, estado y marca de agua
 - [x] Verificar el flujo en escritorio, móvil e impresión
+
+## Reglas nuevas para Tickets archivados
+- [x] Reactivar automáticamente el ticket al cambiarlo a un estado operativo y devolverlo a Domicilios / Tickets
+- [x] Permitir eliminar tickets únicamente desde Tickets archivados
+- [x] Añadir confirmación de eliminación permanente y mensajes de resultado
+- [x] Añadir pruebas de reactivación, eliminación segura y separación entre módulos
+- [x] Verificar los recorridos en escritorio, móvil y recibo
+
+### Verificación manual adicional de Tickets archivados
+- [x] Probar en navegador un ticket archivado: cambiarlo a EnProceso y confirmar que reaparece en Domicilios / Tickets
+- [x] Probar la eliminación definitiva desde Tickets archivados y confirmar que no existe en tickets activos
+- [x] Abrir el recibo de un ticket archivado y verificar marca de agua y estado en escritorio y móvil
+- [x] Verificar en viewport móvil el recibo de un ticket archivado abierto, confirmando visualmente la marca de agua ARCHIVADO/CANCELADO y el estado visible en la vista previa térmica.

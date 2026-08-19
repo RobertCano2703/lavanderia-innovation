@@ -4,7 +4,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { sdk } from "./_core/sdk";
 import { publicProcedure, router } from "./_core/trpc";
-import { archiveTicket, createLocalUser, createPublicTicket, deleteLocalUser, listArchivedTickets, listClients, listLocalUsers, listTickets, updateArchivedTicket, updateLocalUser, upsertUser, verifyLocalUserCredentials } from "./db";
+import { archiveTicket, createLocalUser, createPublicTicket, deleteArchivedTicket, deleteLocalUser, listArchivedTickets, listClients, listLocalUsers, listTickets, updateArchivedTicket, updateLocalUser, upsertUser, verifyLocalUserCredentials } from "./db";
 import { COOKIE_NAME, ONE_YEAR_MS } from "../shared/const";
 
 const publicTicketInput = z.object({
@@ -54,6 +54,7 @@ export const appRouter = router({
     archived: publicProcedure.query(() => listArchivedTickets()),
     archive: publicProcedure.input(z.object({ id: z.number().int().positive() })).mutation(({ input }) => archiveTicket(input.id)),
     updateArchived: publicProcedure.input(z.object({ id: z.number().int().positive(), status: z.enum(["Pendiente", "EnProceso", "Enrutado", "Entregado", "Cancelado"]), totalAmount: z.number().nonnegative(), notes: z.string().optional() })).mutation(({ input }) => updateArchivedTicket(input)),
+    deleteArchived: publicProcedure.input(z.object({ id: z.number().int().positive() })).mutation(({ input }) => deleteArchivedTicket(input.id)),
     createPublic: publicProcedure.input(publicTicketInput).mutation(({ input }) => createPublicTicket(input)),
   }),
 });

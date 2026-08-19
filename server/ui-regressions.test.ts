@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 
 describe("regresiones de acceso y precios en la UI", () => {
   const home = readFileSync(resolve(process.cwd(), "client/src/pages/Home.tsx"), "utf8");
+  const db = readFileSync(resolve(process.cwd(), "server/db.ts"), "utf8");
 
   it("envía el precio del servicio seleccionado y muestra Acceder en la portada", () => {
     expect(home).toContain("servicePrice: requestedPrice");
@@ -84,6 +85,7 @@ describe("regresiones de acceso y precios en la UI", () => {
     expect(home).toContain('module === "ticketsArchivados"');
     expect(home).toContain('title="Archivar ticket"');
     expect(home).not.toContain('title="Eliminar"');
+    expect(home).toContain('deleteArchived.useMutation');
   });
 
   it("protege clientes y valida teléfono y correo antes de crear duplicados", () => {
@@ -100,6 +102,15 @@ describe("regresiones de acceso y precios en la UI", () => {
     expect(home).toContain('title="Editar"');
     expect(home).toContain('status-badge status-archived');
     expect(home).toContain('Archivado</span>');
+  });
+
+  it("reactiva tickets al cambiar a un estado operativo y elimina solo desde archivados", () => {
+    expect(home).toContain('if (result.reactivated) { setModule("tickets")');
+    expect(home).toContain('onDelete={(id) => deleteArchivedTicket.mutate({ id })}');
+    expect(home).toContain('title="Eliminar definitivamente"');
+    expect(home).toContain('¿Eliminar definitivamente este ticket?');
+    expect(db).toContain('deleteArchivedTicket');
+    expect(db).toContain('and(eq(tickets.id, id), isNotNull(tickets.archivedAt))');
   });
 
   it("muestra marca de agua de archivado o cancelación en el recibo", () => {
