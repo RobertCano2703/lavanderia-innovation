@@ -27,6 +27,7 @@ export const clients = mysqlTable("clients", {
   email: varchar("email", { length: 180 }),
   address: varchar("address", { length: 240 }).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
+  archivedAt: timestamp("archivedAt"),
 });
 
 export const services = mysqlTable("services", {
@@ -62,6 +63,7 @@ export const tickets = mysqlTable("tickets", {
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  archivedAt: timestamp("archivedAt"),
 });
 
 export type User = typeof users.$inferSelect;

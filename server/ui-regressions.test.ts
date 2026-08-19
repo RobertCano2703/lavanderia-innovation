@@ -76,4 +76,21 @@ describe("regresiones de acceso y precios en la UI", () => {
     expect(home).toContain('value={courier.name}');
     expect(home).toContain("courier.phone");
   });
+
+  it("protege tickets con consecutivo visible, archivo lógico y módulo histórico", () => {
+    expect(home).toContain('"TK-" + String(Math.max(0, ...tickets.map(ticket => ticket.id)) + 1).padStart(6, "0")');
+    expect(home).toContain('trpc.tickets.archived.useQuery');
+    expect(home).toContain('trpc.tickets.archive.useMutation');
+    expect(home).toContain('module === "ticketsArchivados"');
+    expect(home).toContain('title="Archivar ticket"');
+    expect(home).not.toContain('title="Eliminar"');
+  });
+
+  it("protege clientes y valida teléfono y correo antes de crear duplicados", () => {
+    expect(home).toContain('function normalizePhone');
+    expect(home).toContain('function normalizeEmail');
+    expect(home).toContain('Ya existe un cliente con ese teléfono o correo');
+    expect(home).toContain('className="active-label">Protegido</span>');
+    expect(home).not.toContain('setDeleteClient');
+  });
 });

@@ -222,3 +222,12 @@
 ### Verificación end-to-end pendiente del flujo público
 - [x] Probar en navegador el flujo público completo en escritorio: crear solicitud y confirmar vista previa con cliente, servicio y total
 - [x] Verificar en viewport móvil el flujo público completo, incluyendo envío y apertura de vista previa
+
+## Protección de historial y control de duplicados
+- [x] Cambiar la numeración visible de tickets a consecutivos desde TK-000001, preservando referencias existentes
+- [x] Impedir eliminación física de tickets y ofrecer estado archivado o módulo de tickets archivados
+- [x] Impedir eliminación física de clientes y conservar su historial
+- [x] Validar teléfono y correo al crear solicitudes para reutilizar clientes existentes y evitar duplicados
+- [x] Añadir normalización y restricciones de unicidad para teléfono/correo cuando los datos estén presentes
+- [x] Añadir pruebas de consecutivos, archivo, protección de clientes y deduplicación
+- [x] Verificar migración y flujos administrativos y públicos en escritorio y móvil

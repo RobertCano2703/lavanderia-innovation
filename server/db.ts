@@ -1,4 +1,4 @@
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, isNotNull, isNull, or } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   clients,
@@ -137,23 +137,40 @@ function splitTimeRange(value: string) {
   return { start: parts[0] || value, end: parts[1] || parts[0] || value };
 }
 
-function makeTicketNumber() {
-  return `TK-${String(Date.now()).slice(-5)}${Math.floor(Math.random() * 10)}`;
+function normalizePhone(value: string) {
+  return value.replace(/[^0-9+]/g, "").replace(/^00/, "+");
+}
+
+function normalizeEmail(value?: string | null) {
+  return value?.trim().toLowerCase() || "";
+}
+
+function makeProvisionalTicketNumber() {
+  return `TK-TMP-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+}
+
+function makeTicketNumberFromId(id: number) {
+  return `TK-${String(id).padStart(6, "0")}`;
 }
 
 export async function createPublicTicket(input: PublicTicketInput) {
   const db = await getDb();
   if (!db) throw new Error("La base de datos no está disponible");
 
-  const existingClient = await db.select().from(clients).where(eq(clients.phone, input.phone)).limit(1);
+  const phone = normalizePhone(input.phone);
+  const email = normalizeEmail(input.email);
+  const clientMatch = email
+    ? or(eq(clients.phone, phone), eq(clients.email, email))
+    : eq(clients.phone, phone);
+  const existingClient = await db.select().from(clients).where(clientMatch).limit(1);
   let clientId = existingClient[0]?.id;
   if (clientId) {
-    await db.update(clients).set({ name: input.name, email: input.email || null, address: input.address }).where(eq(clients.id, clientId));
+    await db.update(clients).set({ name: input.name, phone, email: email || null, address: input.address, archivedAt: null }).where(eq(clients.id, clientId));
   } else {
     const inserted = await db.insert(clients).values({
       name: input.name,
-      phone: input.phone,
-      email: input.email || null,
+      phone,
+      email: email || null,
       address: input.address,
     });
     clientId = Number(inserted[0].insertId);
@@ -174,9 +191,8 @@ export async function createPublicTicket(input: PublicTicketInput) {
 
   const pickup = splitTimeRange(input.pickup);
   const delivery = splitTimeRange(input.delivery);
-  const ticketNumber = makeTicketNumber();
   const insertedTicket = await db.insert(tickets).values({
-    ticketNumber,
+    ticketNumber: makeProvisionalTicketNumber(),
     clientId,
     serviceId: service.id,
     status: "Pendiente",
@@ -189,14 +205,54 @@ export async function createPublicTicket(input: PublicTicketInput) {
     notes: `${input.day}. ${input.notes || "Solicitud recibida desde la web"}`,
   });
 
-  return { id: Number(insertedTicket[0].insertId), clientId, ticketNumber, total: Number(service.price) };
+  const ticketId = Number(insertedTicket[0].insertId);
+  const ticketNumber = makeTicketNumberFromId(ticketId);
+  await db.update(tickets).set({ ticketNumber }).where(eq(tickets.id, ticketId));
+
+  return { id: ticketId, clientId, ticketNumber, total: Number(service.price) };
 }
 
 export async function listClients() {
   const db = await getDb();
   if (!db) throw new Error("La base de datos no está disponible");
-  const rows = await db.select().from(clients).orderBy(desc(clients.createdAt));
+  const rows = await db.select().from(clients).where(isNull(clients.archivedAt)).orderBy(desc(clients.createdAt));
   return rows.map(client => ({ id: client.id, name: client.name, phone: client.phone, email: client.email || "—", address: client.address }));
+}
+
+export async function archiveTicket(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("La base de datos no está disponible");
+  await db.update(tickets).set({ archivedAt: new Date() }).where(eq(tickets.id, id));
+  return { success: true } as const;
+}
+
+export async function listArchivedTickets() {
+  const db = await getDb();
+  if (!db) throw new Error("La base de datos no está disponible");
+  const rows = await db
+    .select({ ticket: tickets, client: clients, service: services, courier: deliveryPersonnel })
+    .from(tickets)
+    .innerJoin(clients, eq(tickets.clientId, clients.id))
+    .innerJoin(services, eq(tickets.serviceId, services.id))
+    .leftJoin(deliveryPersonnel, eq(tickets.deliveryPersonnelId, deliveryPersonnel.id))
+    .where(isNotNull(tickets.archivedAt))
+    .orderBy(desc(tickets.createdAt));
+  return rows.map(({ ticket, client, service, courier }) => ({
+    id: ticket.id,
+    ticket: ticket.ticketNumber,
+    client: client.name,
+    phone: client.phone,
+    email: client.email || "",
+    address: client.address,
+    service: service.name,
+    courier: courier?.name || "Sin asignar",
+    status: ticket.status,
+    total: Number(ticket.totalAmount) || Number(service.price) || fallbackServicePrices[service.name] || 0,
+    pickup: [ticket.pickupTimeStart, ticket.pickupTimeEnd].filter(Boolean).join(" - "),
+    delivery: [ticket.deliveryTimeStart, ticket.deliveryTimeEnd].filter(Boolean).join(" - "),
+    clothes: ticket.clothingDescription || "",
+    notes: ticket.notes || "",
+  }));
 }
 
 export async function listTickets() {
@@ -208,6 +264,7 @@ export async function listTickets() {
     .innerJoin(clients, eq(tickets.clientId, clients.id))
     .innerJoin(services, eq(tickets.serviceId, services.id))
     .leftJoin(deliveryPersonnel, eq(tickets.deliveryPersonnelId, deliveryPersonnel.id))
+    .where(isNull(tickets.archivedAt))
     .orderBy(desc(tickets.createdAt));
 
   return rows.map(({ ticket, client, service, courier }) => ({

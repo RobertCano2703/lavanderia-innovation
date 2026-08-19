@@ -4,7 +4,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { sdk } from "./_core/sdk";
 import { publicProcedure, router } from "./_core/trpc";
-import { createLocalUser, createPublicTicket, deleteLocalUser, listClients, listLocalUsers, listTickets, updateLocalUser, upsertUser, verifyLocalUserCredentials } from "./db";
+import { archiveTicket, createLocalUser, createPublicTicket, deleteLocalUser, listArchivedTickets, listClients, listLocalUsers, listTickets, updateLocalUser, upsertUser, verifyLocalUserCredentials } from "./db";
 import { COOKIE_NAME, ONE_YEAR_MS } from "../shared/const";
 
 const publicTicketInput = z.object({
@@ -51,6 +51,8 @@ export const appRouter = router({
   }),
   tickets: router({
     list: publicProcedure.query(() => listTickets()),
+    archived: publicProcedure.query(() => listArchivedTickets()),
+    archive: publicProcedure.input(z.object({ id: z.number().int().positive() })).mutation(({ input }) => archiveTicket(input.id)),
     createPublic: publicProcedure.input(publicTicketInput).mutation(({ input }) => createPublicTicket(input)),
   }),
 });
