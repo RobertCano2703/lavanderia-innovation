@@ -1,4 +1,4 @@
-import { desc, eq, isNotNull, isNull, or } from "drizzle-orm";
+import { and, desc, eq, isNotNull, isNull, or } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   clients,
@@ -223,6 +223,13 @@ export async function archiveTicket(id: number) {
   const db = await getDb();
   if (!db) throw new Error("La base de datos no está disponible");
   await db.update(tickets).set({ archivedAt: new Date() }).where(eq(tickets.id, id));
+  return { success: true } as const;
+}
+
+export async function updateArchivedTicket(input: { id: number; status: "Pendiente" | "EnProceso" | "Enrutado" | "Entregado" | "Cancelado"; totalAmount: number; notes?: string }) {
+  const db = await getDb();
+  if (!db) throw new Error("La base de datos no está disponible");
+  await db.update(tickets).set({ status: input.status, totalAmount: String(input.totalAmount), notes: input.notes || null }).where(and(eq(tickets.id, input.id), isNotNull(tickets.archivedAt)));
   return { success: true } as const;
 }
 

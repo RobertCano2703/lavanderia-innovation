@@ -93,4 +93,18 @@ describe("regresiones de acceso y precios en la UI", () => {
     expect(home).toContain('className="active-label">Protegido</span>');
     expect(home).not.toContain('setDeleteClient');
   });
+
+  it("permite editar archivados y conserva el estado histórico visible", () => {
+    expect(home).toContain('trpc.tickets.updateArchived.useMutation');
+    expect(home).toContain('function ArchivedTickets({ tickets, onPrint, onSave');
+    expect(home).toContain('title="Editar"');
+    expect(home).toContain('status-badge status-archived');
+    expect(home).toContain('Archivado</span>');
+  });
+
+  it("muestra marca de agua de archivado o cancelación en el recibo", () => {
+    expect(home).toContain('receipt-watermark');
+    expect(home).toContain('"CANCELADO" : "ARCHIVADO"');
+    expect(home).toContain('previewTicket.archived');
+  });
 });

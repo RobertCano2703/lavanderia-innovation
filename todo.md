@@ -231,3 +231,10 @@
 - [x] Añadir normalización y restricciones de unicidad para teléfono/correo cuando los datos estén presentes
 - [x] Añadir pruebas de consecutivos, archivo, protección de clientes y deduplicación
 - [x] Verificar migración y flujos administrativos y públicos en escritorio y móvil
+
+## Mejoras solicitadas en Tickets archivados
+- [x] Permitir editar tickets archivados desde su módulo histórico
+- [x] Mostrar el estado Archivado de forma diferenciada del estado operativo
+- [x] Mostrar marca de agua ARCHIVADO o CANCELADO en el recibo térmico de tickets archivados
+- [x] Añadir pruebas para edición, estado y marca de agua
+- [x] Verificar el flujo en escritorio, móvil e impresión

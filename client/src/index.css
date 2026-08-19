@@ -187,3 +187,10 @@ button { cursor:pointer; }
   .receipt-dialog-scroll { max-height:none; padding:0; background:white; overflow:visible; }
   .receipt-dialog-scroll .thermal-receipt { box-shadow:none; width:58mm; min-height:0; margin:0 auto; }
 }
+
+.receipt-watermark { position:absolute; inset:38% 0 auto; z-index:2; transform:rotate(-18deg); text-align:center; border:3px solid currentColor; padding:10px 6px; font:900 28px/1 Manrope,sans-serif; letter-spacing:3px; opacity:.2; pointer-events:none; }
+.receipt-watermark.archived { color:#385a9e; }
+.receipt-watermark.cancelled { color:#b33c3c; }
+.thermal-receipt { position:relative; overflow:hidden; }
+.status-archived { background:#e8edf7; color:#385a9e; border-color:#b9c7e2; }
+@media print { .receipt-watermark { opacity:.28; } }
