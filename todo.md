@@ -275,3 +275,9 @@
 - [x] Comparar el bundle y la navegación entre desarrollo y el dominio publicado
 - [x] Publicar una versión actualizada que incluya el menú móvil de Servicios
 - [x] Verificar el menú en el dominio público y en viewport móvil
+
+## Incidencia responsive: tablas móviles de Clientes y Usuarios
+- [x] Añadir desplazamiento horizontal visible y usable en la tabla de Clientes
+- [x] Añadir desplazamiento horizontal visible y usable en la tabla de Usuarios
+- [x] Garantizar acceso a acciones Ver y Editar desde móvil
+- [x] Añadir pruebas y verificar las tablas en viewport móvil

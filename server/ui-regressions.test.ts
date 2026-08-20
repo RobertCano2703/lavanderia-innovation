@@ -25,6 +25,17 @@ describe("regresiones de acceso y precios en la UI", () => {
     expect(css).toContain('.services-close');
   });
 
+  it("mantiene Clientes y Usuarios accesibles mediante scroll horizontal en móvil", () => {
+    expect(home).toContain('aria-label="Tabla de clientes, desliza horizontalmente para ver acciones"');
+    expect(home).toContain('aria-label="Tabla de usuarios, desliza horizontalmente para ver acciones"');
+    expect(home).toContain('className="table-scroll-hint"');
+    expect(home).toContain('<Eye size={16} />');
+    expect(home).toContain('<Pencil size={16} />');
+    expect(css).toContain('.table-scroll { width:100%; overflow-x:auto;');
+    expect(css).toContain('.table-panel .table-scroll-hint { display:block; }');
+    expect(css).toContain('-webkit-overflow-scrolling:touch');
+  });
+
   it("muestra una vista previa térmica después de crear la solicitud pública", () => {
     expect(home).toContain("setPreviewTicket(persistedTicket)");
     expect(home).toContain('className="receipt-dialog public-receipt-dialog"');
