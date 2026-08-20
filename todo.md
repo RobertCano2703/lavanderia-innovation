@@ -281,3 +281,9 @@
 - [x] Añadir desplazamiento horizontal visible y usable en la tabla de Usuarios
 - [x] Garantizar acceso a acciones Ver y Editar desde móvil
 - [x] Añadir pruebas y verificar las tablas en viewport móvil
+
+## Validación estricta de teléfonos y correos en formularios
+- [x] Permitir únicamente dígitos en teléfonos de Clientes, Usuarios y Domiciliarios
+- [x] Rechazar letras, símbolos e indicativos en los teléfonos antes de guardar
+- [x] Exigir formato de correo con @ y dominio .com en los formularios aplicables
+- [x] Añadir pruebas de regresión y verificar los formularios en escritorio y móvil

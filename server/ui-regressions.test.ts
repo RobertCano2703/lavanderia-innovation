@@ -25,6 +25,21 @@ describe("regresiones de acceso y precios en la UI", () => {
     expect(css).toContain('.services-close');
   });
 
+  it("restringe teléfonos a dígitos y valida correos con formato .com", () => {
+    expect(home).toContain("function isValidBusinessEmail");
+    expect(home).toContain('type="tel" inputMode="numeric" maxLength={10}');
+    expect(home).toContain('pattern="[0-9]{10}"');
+    expect(home).toContain("sanitizeLocalPhone(e.target.value)");
+    expect(home).toContain("El correo debe tener un formato válido, por ejemplo cliente@correo.com.");
+    expect(home).toContain('pattern="[^\\\\s@]+@[^\\\\s@]+\\\\.com"');
+    expect(home).toContain('title="Usa un correo como cliente@correo.com"');
+    expect(home).toContain("function Couriers");
+    expect(home).toContain("const phone = sanitizeLocalPhone(form.phone)");
+    expect(home).toContain("isValidBusinessEmail(email)");
+    expect(home).toContain("form.email && !isValidBusinessEmail(form.email)");
+    expect(home).toContain("function UsersModule");
+  });
+
   it("mantiene Clientes y Usuarios accesibles mediante scroll horizontal en móvil", () => {
     expect(home).toContain('aria-label="Tabla de clientes, desliza horizontalmente para ver acciones"');
     expect(home).toContain('aria-label="Tabla de usuarios, desliza horizontalmente para ver acciones"');
