@@ -25,6 +25,17 @@ describe("regresiones de acceso y precios en la UI", () => {
     expect(css).toContain('.services-close');
   });
 
+  it("usa un diálogo visual para confirmar la eliminación de domiciliarios", () => {
+    expect(home).toContain('title="Eliminar domiciliario"');
+    expect(home).toContain('deleteTarget !== null');
+    expect(home).toContain('¿Eliminar este domiciliario?');
+    expect(home).toContain('Esta acción quitará a <b>{deleteTarget?.name}</b>');
+    expect(home).toContain('Eliminar domiciliario</Button>');
+    expect(home).not.toContain('window.confirm(`¿Eliminar ${c.name}?`)');
+    expect(css).toContain('.delete-dialog');
+    expect(css).toContain('.delete-icon');
+  });
+
   it("restringe teléfonos a dígitos y valida correos con formato .com", () => {
     expect(home).toContain("function isValidBusinessEmail");
     expect(home).toContain('type="tel" inputMode="numeric" maxLength={10}');

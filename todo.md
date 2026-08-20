@@ -287,3 +287,8 @@
 - [x] Rechazar letras, símbolos e indicativos en los teléfonos antes de guardar
 - [x] Exigir formato de correo con @ y dominio .com en los formularios aplicables
 - [x] Añadir pruebas de regresión y verificar los formularios en escritorio y móvil
+
+## Confirmación visual al eliminar domiciliarios
+- [x] Reemplazar window.confirm por un diálogo visual consistente con Tickets archivados
+- [x] Mostrar nombre del domiciliario y acciones explícitas Cancelar y Eliminar
+- [x] Añadir pruebas y verificar el diálogo en escritorio y móvil
